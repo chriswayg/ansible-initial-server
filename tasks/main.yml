@@ -16,13 +16,15 @@
       - python-apt
       - sudo
 
-  - name: Add the default user with passwordless sudo to sodoers.d.
-    copy:
-      src: user-deploy
-      dest: /etc/sudoers.d/user-deploy
+  ### SUDOERS ###
+  - name: Add the default user with passwordless sudo to sodoers.d
+    template:
+      src: default-user.j2
+      dest: /etc/sudoers.d/default-user
       mode: 0440
 
-  # - name: Ensure, that the default user can do passwordless sudo.
+  # (optional)
+  # - name: Ensure, that members of the sodoers group can do passwordless sudo.
   #   lineinfile:
   #     path: /etc/sudoers
   #     state: present
@@ -34,57 +36,17 @@
   #     name: "{{ iserver_user }}"
   #     groups: sudo
   #     append: yes
+  ## End of block KICKSTART
   become: true
   become_method: "{{ iserver_become }}"
 
-# Now that the default user can do passwordless sudo, run the rest with sudo.
+## Now that the default user can do passwordless sudo, run the rest with sudo.
 - name: MAIN
   block:
-  - name: reset ssh connection to allow user changes to affect 'current login user'
+  - name: Reset SSH connection to allow user changes to affect 'current login user'.
     meta: reset_connection
 
-  - name: Ensure, that the default user has an ssh authorized key.
-    authorized_key:
-      user: "{{ iserver_user }}"
-      state: present
-      key: "{{ iserver_sshkey }}"
-
-  # see also https://github.com/holms/ansible-fqdn
-  - name: Set hostname.
-    hostname:
-      name: "{{ iserver_hostname }}"
-    register: new_hostname_set
-
-  - name: Copy original hosts file to back it up (once).
-    command: cp /etc/hosts /etc/hosts.original
-    args:
-      creates: /etc/hosts.original
-
-  - name: Change hostname in etc/hosts, if hostname has changed.
-    lineinfile:
-      path: /etc/hosts
-      state: present
-      regexp: "^127.0.1.1"
-      line: "127.0.1.1       {{ iserver_fqdn }}  {{ iserver_hostname }}"
-    when: (new_hostname_set is changed) and (not iserver_custom_etchosts)
-
-  - name: Create a custom hosts file with FQDN and hostname from a template.
-    template:
-      src: hosts.j2
-      dest: /etc/hosts
-    register: restart_systemd_login
-    when: iserver_custom_etchosts
-
-  - name: Restart systemd-logind to activate hostname.
-    service:
-      name: systemd-logind
-      state: restarted
-    when: new_hostname_set is changed
-
-  - name: Set timezone.
-    timezone:
-      name: "{{ iserver_timezone }}"
-
+  ### BASE PACKAGES ###
   - name: Move original /etc/apt/sources.list to back it up (once).
     command: mv /etc/apt/sources.list /etc/apt/sources.list.original
     args:
@@ -108,34 +70,40 @@
       name: "{{ iserver_packages }}"
       state: present
 
-  - name: Disallow root SSH access, only allow SSH key login.
-    lineinfile:
-      path: /etc/ssh/sshd_config
-      state: present
-      regexp: "{{ item.regexp }}"
-      line: "{{ item.line }}"
-    loop:
-      - { regexp: '^PermitRootLogin', line: 'PermitRootLogin no' }
-      - { regexp: '^PasswordAuthentication', line: 'PasswordAuthentication no' }
-    register: restart_ssh
+  ### NETWORKING ###
+  # see also https://github.com/holms/ansible-fqdn
+  - name: Set hostname.
+    hostname:
+      name: "{{ iserver_hostname }}"
+    register: new_hostname_set
 
-  - name: Restart SSH.
+  # - name: Set domainname.
+  #   command: domainname "{{ iserver_domain }}"
+
+  - name: Copy original hosts file to back it up (once).
+    command: cp /etc/hosts /etc/hosts.original
+    args:
+      creates: /etc/hosts.original
+
+  - name: Change hostname in etc/hosts, if hostname has changed.
+    lineinfile:
+      path: /etc/hosts
+      state: present
+      regexp: "^{{ iserver_ip }}"
+      line: "{{ iserver_ip }}       {{ iserver_fqdn }}  {{ iserver_hostname }}"
+    when: (new_hostname_set is changed) and (not iserver_custom_etchosts)
+
+  - name: Create a custom hosts file with FQDN and hostname from a template.
+    template:
+      src: hosts.j2
+      dest: /etc/hosts
+    when: iserver_custom_etchosts
+
+  - name: Restart systemd-logind to activate hostname.
     service:
-      name: ssh
+      name: systemd-logind
       state: restarted
-    when: restart_ssh is changed
-
-  - name: Enable the serial console by modifying grub.
-    lineinfile:
-      path: /etc/default/grub
-      state: present
-      regexp: '^GRUB_CMDLINE_LINUX_DEFAULT='
-      line: 'GRUB_CMDLINE_LINUX_DEFAULT="console=ttyS0 console=tty0"'
-    register: update_grub
-
-  - name: Update grub.
-    shell: update-grub
-    when: update_grub is changed
+    when: new_hostname_set is changed
 
   - name: Copy original /etc/issue (once) which is displayed before login.
     command: cp /etc/issue /etc/issue.original
@@ -149,6 +117,38 @@
       dest: /etc/network/if-up.d/show-ip-address
       mode: a+x
 
+  - name: Set timezone.
+    timezone:
+      name: "{{ iserver_timezone }}"
+
+  ### SSH ###
+  - name: Ensure, that the default user has an ssh authorized key.
+    authorized_key:
+      user: "{{ iserver_user }}"
+      state: present
+      key: "{{ iserver_sshkey }}"
+
+  # UseDNS value is set to no which avoids login delays
+  # when the remote client's DNS cannot be resolved
+  - name: Disallow root SSH access, only allow SSH key login; UseDNS no.
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      state: present
+      regexp: "{{ item.regexp }}"
+      line: "{{ item.line }}"
+    loop:
+      - { regexp: '^UseDNS', line: 'UseDNS no' }
+      - { regexp: '^PermitRootLogin', line: 'PermitRootLogin no' }
+      - { regexp: '^PasswordAuthentication', line: 'PasswordAuthentication no' }
+    register: restart_ssh
+
+  - name: Restart SSH.
+    service:
+      name: ssh
+      state: restarted
+    when: restart_ssh is changed
+
+  ### CUSTOMIZE ###
   - name: Move the original /etc/motd to back it up (once).
     command: mv /etc/motd /etc/motd.original
     args:
@@ -160,7 +160,7 @@
       dest: /etc/update-motd.d/20-motd-welcome
       mode: a+x
 
-  # or do it linbe by line (slower)
+  # or do it line by line (slower)
   - name: Add a block of bashrc config to all users.
     blockinfile:
       path: "{{ item }}/.bashrc"
@@ -179,6 +179,20 @@
       path: /home/{{ iserver_user }}/.bashrc
       line: 'export PS1="\[\033[1;34m\][\u@\h:\w]$\[\033[0m\] "'
 
+  ### CLOUD ###
+  - name: Enable the serial console by modifying grub.
+    lineinfile:
+      path: /etc/default/grub
+      state: present
+      regexp: '^GRUB_CMDLINE_LINUX_DEFAULT='
+      line: 'GRUB_CMDLINE_LINUX_DEFAULT="console=ttyS0 console=tty0"'
+    register: update_grub
+
+  - name: Update grub.
+    shell: update-grub
+    when: update_grub is changed
+
+  # AUTOGROWPART #
   - name: Copy systemd unitfile to automatically Grow Partition after resize by Proxmox.
     copy:
       src: autogrowpart.service
@@ -186,21 +200,42 @@
       mode: 0644
     register: enable_autogrowpart
 
-  - name: Enable the autogrowpart service.
-    service:
-      name: autogrowpart
-      enabled: yes
-    when: enable_autogrowpart is changed
-
   - name: Copy script to automatically Grow Partition after resize by Proxmox.
     copy:
       src: auto_grow_partition.sh
       dest: /usr/local/bin/auto_grow_partition.sh
       mode: a+x
 
+  - name: Enable the autogrowpart service.
+    service:
+      name: autogrowpart
+      enabled: yes
+    when: enable_autogrowpart is changed
+
+  ### CLEANUP (for KVM Template) ###
+  - name: Remove packages from the cache
+    apt:
+      autoclean: yes
+      autoremove: yes
+    when: iserver_cleanup
+
+  - name: Copy the cleanup script.
+    template:
+      src: cleanup-for-template.sh.j2
+      dest: /tmp/cleanup-for-template.sh
+      mode: a+x
+    when: iserver_cleanup
+
+  - name: Run the cleanup script for VM templates (only once).
+    shell: /tmp/cleanup-for-template.sh
+    args:
+      creates: /etc/.cleanup-for-template-done
+    when: iserver_cleanup
+
   # or use '*'
   - name: Prevent password authentication for root.
     user:
       name: root
       password: '!'
+  ## End of block MAIN
   become: true
