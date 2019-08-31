@@ -1,19 +1,9 @@
 ---
 # defaults file for ansible-initial-server
 
-iserver_become: sudo
+### SUDOERS ###
 
-iserver_hostname: deb10-kvm
-iserver_domain: unassigned.domain
-iserver_fqdn: "{{ iserver_hostname }}.{{ iserver_domain }}"
-
-# for a template we do not want the current DHCP IP set in hosts
-# on a server with a fixed IP we do want that
-iserver_custom_etchosts: false
-iserver_ip: "{{ ansible_default_ipv4.address }}"
-
-iserver_timezone: UTC
-
+### BASE PACKAGES ###
 iserver_repos:
   - deb http://repo.myloc.de/debian buster main non-free contrib
   - deb-src http://repo.myloc.de/debian buster main non-free contrib
@@ -39,14 +29,30 @@ iserver_packages:
   # - pv
   # - screen
 
+### NETWORKING ###
+iserver_hostname: deb10-kvm
+iserver_domain: unassigned.domain
+iserver_fqdn: "{{ iserver_hostname }}.{{ iserver_domain }}"
+
+# using a localhost ip, because for a template we do not want the current DHCP IP set in hosts
+iserver_ip: 127.0.1.1
+# on a server with a fixed IP want the current ip in hosts
+#iserver_ip: "{{ ansible_default_ipv4.address }}"
+iserver_custom_etchosts: false
+
 iserver_interface: ens18
 
+iserver_timezone: UTC
+
+### SSH & SUDOERS ###
+iserver_become: sudo # do not chanage this
 iserver_user: deploy
 iserver_sshkey: "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_rsa.pub') }}"
 
+### CUSTOMIZE ###
 iserver_users_dirs:
   - /root
-  - /home/deploy
+  - /home/{{ iserver_user }}
 
 iserver_bashrc: |
   export LS_OPTIONS='--color=auto'
@@ -54,3 +60,6 @@ iserver_bashrc: |
   alias ls='ls $LS_OPTIONS'
   alias ll='ls $LS_OPTIONS -l'
   alias l='ls $LS_OPTIONS -lA'
+
+### CLEANUP (for KVM Template) ###
+iserver_cleanup: false
