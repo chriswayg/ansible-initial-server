@@ -117,6 +117,14 @@
       src: show-ip-address.j2
       dest: /etc/network/if-up.d/show-ip-address
       mode: a+x
+    when: ansible_distribution == 'Debian'
+
+  - name: Copy script which will run when the network comes up to display IP before login.
+    copy:
+      src: 99-show-ip-address
+      dest: /etc/networkd-dispatcher/routable.d/99-show-ip-address
+      mode: a+x
+    when: ansible_distribution == 'Ubuntu'
 
   - name: Set timezone.
     timezone:
@@ -154,12 +162,28 @@
     command: mv /etc/motd /etc/motd.original
     args:
       creates: /etc/motd.original
+    when: ansible_distribution == 'Debian'
 
   - name: Copy the file which will show the motd after login.
     copy:
       src: 20-motd-welcome
       dest: /etc/update-motd.d/20-motd-welcome
       mode: a+x
+    when: ansible_distribution == 'Debian'
+
+  - name: Remove Ubuntu help-text from motd
+    file:
+      path: /etc/update-motd.d/10-help-text
+      state: absent
+    when: ansible_distribution == 'Ubuntu'
+
+  - name: Remove Ubuntu ads from motd
+    lineinfile:
+      path: /etc/default/motd-news
+      state: present
+      regexp: '^ENABLED='
+      line: 'ENABLED=0'
+    when: ansible_distribution == 'Ubuntu'
 
   # or do it line by line (slower)
   - name: Add a block of bashrc config to all users.
