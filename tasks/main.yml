@@ -36,6 +36,7 @@
   #     name: "{{ iserver_user }}"
   #     groups: sudo
   #     append: yes
+
   ## End of block KICKSTART
   become: true
   become_method: "{{ iserver_become }}"
@@ -137,9 +138,9 @@
       regexp: "{{ item.regexp }}"
       line: "{{ item.line }}"
     loop:
-      - { regexp: '^UseDNS', line: 'UseDNS no' }
       - { regexp: '^PermitRootLogin', line: 'PermitRootLogin no' }
       - { regexp: '^PasswordAuthentication', line: 'PasswordAuthentication no' }
+      - { regexp: '^UseDNS', line: 'UseDNS no' }
     register: restart_ssh
 
   - name: Restart SSH.
@@ -213,23 +214,17 @@
     when: enable_autogrowpart is changed
 
   ### CLEANUP (for KVM Template) ###
-  - name: Remove packages from the cache
-    apt:
-      autoclean: yes
-      autoremove: yes
-    when: iserver_cleanup
-
   - name: Copy the cleanup script.
     template:
-      src: cleanup-for-template.sh.j2
-      dest: /tmp/cleanup-for-template.sh
+      src: template-cleanup.sh.j2
+      dest: /tmp/template-cleanup.sh
       mode: a+x
     when: iserver_cleanup
 
   - name: Run the cleanup script for VM templates (only once).
-    shell: /tmp/cleanup-for-template.sh
+    shell: /tmp/template-cleanup.sh
     args:
-      creates: /etc/.cleanup-for-template-done
+      creates: /etc/.template-cleanup.done
     when: iserver_cleanup
 
   # or use '*'
