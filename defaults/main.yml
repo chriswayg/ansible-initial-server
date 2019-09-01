@@ -4,6 +4,7 @@
 ### SUDOERS ###
 
 ### BASE PACKAGES ###
+# Debian 10 buster 
 iserver_repos:
   - deb http://repo.myloc.de/debian buster main non-free contrib
   - deb-src http://repo.myloc.de/debian buster main non-free contrib
