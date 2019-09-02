@@ -26,7 +26,7 @@ iserver_packages:
   - psmisc
   - net-tools
   - cloud-guest-utils
-  # - verse
+  - verse
   # - lsof
   # - lshw
   # - ncdu
@@ -53,6 +53,14 @@ iserver_sshkey: "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_rsa.pub') }}
 ### CUSTOMIZE ###
 iserver_timezone: UTC
 
+# this needs verse to be installed
+iserver_user_profile: |
+  if [ -f /usr/bin/verse ]; then
+      echo ""
+      /usr/bin/verse
+      echo ""
+  fi
+
 iserver_users_dirs:
   - /root
   - /home/{{ iserver_user }}
@@ -63,6 +71,8 @@ iserver_bashrc: |
   alias ls='ls $LS_OPTIONS'
   alias ll='ls $LS_OPTIONS -l'
   alias l='ls $LS_OPTIONS -lA'
+
+
 
 ### CLEANUP (for KVM template) ###
 iserver_is_template: false

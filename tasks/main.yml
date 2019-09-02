@@ -211,6 +211,13 @@
       line: 'ENABLED=0'
     when: ansible_distribution == 'Ubuntu'
 
+  - name: Add a block of commands in the default user profile.
+    blockinfile:
+      path: "/home/{{ iserver_user }}/.profile"
+      block: |
+        {{ iserver_user_profile }}
+      marker: "# {mark} ANSIBLE MANAGED BLOCK"
+
   # or do it line by line (slower)
   - name: Add a block of bashrc config to root and the default user.
     blockinfile:
@@ -219,13 +226,11 @@
         {{ iserver_bashrc }}
       marker: "# {mark} ANSIBLE MANAGED BLOCK"
     loop: "{{ iserver_users_dirs }}"
-    when: user_exists is succeeded
 
   - name: Customize default user bashrc - prompt is blue.
     lineinfile:
       path: /home/{{ iserver_user }}/.bashrc
       line: 'export PS1="\[\033[1;34m\][\u@\h:\w]$\[\033[0m\] "'
-    when: user_exists is succeeded
 
   - name: Customize root bashrc - prompt is red.
     lineinfile:
