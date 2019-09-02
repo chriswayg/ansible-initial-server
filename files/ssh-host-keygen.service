@@ -6,9 +6,9 @@ ConditionPathExists=/etc/run-ssh-host-keygen-once
 [Service]
 # remove all host keys first, so that all will be refreshed
 # (only executed on first boot)
-ExecStart=/bin/bash -c '/usr/bin/rm -v -f /etc/ssh/*key*'
-ExecStart=/usr/bin/ssh-keygen -A
-ExecStart=/usr/bin/rm -v -f /etc/run-ssh-host-keygen-once
+ExecStart=/bin/bash -c 'rm -v -f /etc/ssh/*key*'
+ExecStart=/bin/bash -c 'ssh-keygen -A'
+ExecStart=/bin/bash -c 'rm -v -f /etc/run-ssh-host-keygen-once'
 Type=oneshot
 
 [Install]
