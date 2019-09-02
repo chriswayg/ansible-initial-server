@@ -1,8 +1,7 @@
 ---
 # tasks file for ansible-initial-server
 ## TODO:
-## - check, what has to be changed for Ubuntu 18.04 (probably using su is not needed)
-## -
+## - check that it works with a default Ubuntu 18.04 ISO server install (probably using 'su' is not needed)
 
 # For this block we use 'su' on first-run, because root cannot ssh into the server.
 - name: KICKSTART
@@ -48,10 +47,12 @@
     meta: reset_connection
 
   ### BASE PACKAGES ###
+  # replaces sources.list if iserver_repos have a repo defined
   - name: Move original /etc/apt/sources.list to back it up (once).
     command: mv /etc/apt/sources.list /etc/apt/sources.list.original
     args:
       creates: /etc/apt/sources.list.original
+    when: iserver_repos is defined
 
   # this requires python-apt
   - name: Add a set of specified repositories into sources list.
@@ -59,6 +60,7 @@
       repo: "{{ item }}"
       state: present
     loop: "{{ iserver_repos }}"
+    when: iserver_repos is defined
 
   - name: Ensure, that all packages are updated and upgraded.
     apt:
@@ -126,10 +128,6 @@
       mode: a+x
     when: ansible_distribution == 'Ubuntu'
 
-  - name: Set timezone.
-    timezone:
-      name: "{{ iserver_timezone }}"
-
   ### SSH ###
   - name: Ensure, that the default user has an ssh authorized key.
     authorized_key:
@@ -157,7 +155,27 @@
       state: restarted
     when: restart_ssh is changed
 
+  # SSH-HOST-KEYGEN (for KVM template)
+  - name: Copy systemd unitfile for OpenSSH Server Key Generation.
+    copy:
+      src: ssh-host-keygen.service
+      dest: /etc/systemd/system/ssh-host-keygen.service
+      mode: 0644
+    register: enable_ssh-host-keygen
+    when: iserver_is_template
+
+  - name: Enable ssh-host-keygen service that generates SSH server keys on first boot ..
+    service:
+      name: ssh-host-keygen
+      enabled: yes
+    when: enable_ssh-host-keygen is changed
+    when: iserver_is_template
+
   ### CUSTOMIZE ###
+  - name: Set timezone.
+    timezone:
+      name: "{{ iserver_timezone }}"
+
   - name: Move the original /etc/motd to back it up (once).
     command: mv /etc/motd /etc/motd.original
     args:
@@ -237,19 +255,19 @@
       enabled: yes
     when: enable_autogrowpart is changed
 
-  ### CLEANUP (for KVM Template) ###
+  ### CLEANUP (for KVM template) ###
   - name: Copy the cleanup script.
     template:
       src: template-cleanup.sh.j2
       dest: /tmp/template-cleanup.sh
       mode: a+x
-    when: iserver_cleanup
+    when: iserver_is_template
 
   - name: Run the cleanup script for VM templates (only once).
     shell: /tmp/template-cleanup.sh
     args:
       creates: /etc/.template-cleanup.done
-    when: iserver_cleanup
+    when: iserver_is_template
 
   # or use '*'
   - name: Prevent password authentication for root.
