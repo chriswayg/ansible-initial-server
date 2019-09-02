@@ -167,7 +167,7 @@
     register: enable_ssh_host_keygen
     when: iserver_is_template
 
-  - name: Enable ssh-host-keygen service that generates SSH server keys on first boot ..
+  - name: Enable ssh-host-keygen service that generates new SSH host keys on first boot.
     service:
       name: ssh-host-keygen
       enabled: yes
