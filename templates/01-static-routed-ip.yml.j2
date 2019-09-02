@@ -1,0 +1,16 @@
+# netplan for guest VM
+
+network:
+  version: 2
+  renderer: networkd
+  ethernets:
+    {{ iserver_interface }}:
+      dhcp4: no
+      dhcp6: no
+      addresses: [{{ iserver_ip }}/32]
+      routes:
+      - to: 0.0.0.0/0
+        via: {{ iserver_prox_main_ip }}
+        on-link: true
+      nameservers:
+        addresses: [62.141.32.3,62.141.32.4,62.141.32.5,1.1.1.1]

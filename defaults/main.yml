@@ -40,12 +40,16 @@ iserver_hostname: iserver-kvm
 iserver_domain: unassigned.domain
 iserver_fqdn: "{{ iserver_hostname }}.{{ iserver_domain }}"
 
-# using a localhost ip, because for a template we do not want the current DHCP IP set in hosts
-iserver_ip: 127.0.1.1
-# on a server with a fixed IP: use the current vm ip in hosts
-#iserver_ip: "{{ ansible_default_ipv4.address }}"
-
+# The main IP of the Proxmox host
+iserver_prox_main_ip: 127.1.1.1
 iserver_interface: ens18
+
+# This IP will go into 'hosts' 
+# - use a localhost IP for a template with DHCP
+# - or use a fixed routed external IP for servers
+# - which will also go into and 'interfaces' or 'netplan'
+iserver_ip: 127.0.1.1
+set_fixed_IP: false
 
 ### SSH ###
 iserver_sshkey: "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_rsa.pub') }}"
