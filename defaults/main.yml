@@ -2,16 +2,20 @@
 # defaults file for ansible-initial-server
 
 ### SUDOERS ###
+# use the name of the default user which was used during installation
+# this Ansible role is not intended to add or change a default user
+iserver_user: deploy
+iserver_become: sudo # do not chanage this
 
 ### BASE PACKAGES ###
-# Debian 10 buster 
 iserver_repos:
-  - deb http://repo.myloc.de/debian buster main non-free contrib
-  - deb-src http://repo.myloc.de/debian buster main non-free contrib
-  - deb http://security.debian.org/debian-security buster/updates main contrib non-free
-  - deb-src http://security.debian.org/debian-security buster/updates main contrib non-free
-  - deb http://deb.debian.org/debian buster-updates main contrib non-free
-  - deb-src http://deb.debian.org/debian buster-updates main contrib non-free
+  ## Debian 10 buster example
+  # - deb http://repo.myloc.de/debian buster main non-free contrib
+  # - deb-src http://repo.myloc.de/debian buster main non-free contrib
+  # - deb http://security.debian.org/debian-security buster/updates main contrib non-free
+  # - deb-src http://security.debian.org/debian-security buster/updates main contrib non-free
+  # - deb http://deb.debian.org/debian buster-updates main contrib non-free
+  # - deb-src http://deb.debian.org/debian buster-updates main contrib non-free
 
 # packages we want on every server
 iserver_packages:
@@ -31,26 +35,24 @@ iserver_packages:
   # - screen
 
 ### NETWORKING ###
-iserver_hostname: deb10-kvm
+iserver_hostname: iserver-kvm
 iserver_domain: unassigned.domain
 iserver_fqdn: "{{ iserver_hostname }}.{{ iserver_domain }}"
 
 # using a localhost ip, because for a template we do not want the current DHCP IP set in hosts
 iserver_ip: 127.0.1.1
-# on a server with a fixed IP want the current ip in hosts
+# on a server with a fixed IP: use the current ip in hosts
 #iserver_ip: "{{ ansible_default_ipv4.address }}"
 iserver_custom_etchosts: false
 
 iserver_interface: ens18
 
-iserver_timezone: UTC
-
-### SSH & SUDOERS ###
-iserver_become: sudo # do not chanage this
-iserver_user: deploy
+### SSH ###
 iserver_sshkey: "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_rsa.pub') }}"
 
 ### CUSTOMIZE ###
+iserver_timezone: UTC
+
 iserver_users_dirs:
   - /root
   - /home/{{ iserver_user }}
@@ -62,5 +64,5 @@ iserver_bashrc: |
   alias ll='ls $LS_OPTIONS -l'
   alias l='ls $LS_OPTIONS -lA'
 
-### CLEANUP (for KVM Template) ###
-iserver_cleanup: false
+### CLEANUP (for KVM template) ###
+iserver_is_template: false
