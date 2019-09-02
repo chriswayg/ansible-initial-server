@@ -42,9 +42,8 @@ iserver_fqdn: "{{ iserver_hostname }}.{{ iserver_domain }}"
 
 # using a localhost ip, because for a template we do not want the current DHCP IP set in hosts
 iserver_ip: 127.0.1.1
-# on a server with a fixed IP: use the current ip in hosts
+# on a server with a fixed IP: use the current vm ip in hosts
 #iserver_ip: "{{ ansible_default_ipv4.address }}"
-iserver_custom_etchosts: false
 
 iserver_interface: ens18
 
