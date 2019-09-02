@@ -100,8 +100,8 @@
       regexp: "{{ item.regexp }}"
       line: "{{ item.line }}"
     loop:
-      - { regexp: '^127.0.0.1', line: '127.0.0.1 localhost.localdomain localhost' }
-      - { regexp: '^{{ iserver_ip }}', line: '{{ iserver_ip }}       {{ iserver_fqdn }}  {{ iserver_hostname }}' }
+      - { regexp: '^127.0.0.1', line: '127.0.0.1  localhost.localdomain  localhost' }
+      - { regexp: '^{{ iserver_ip }}', line: '{{ iserver_ip }}  {{ iserver_fqdn }}  {{ iserver_hostname }}' }
     when: new_hostname_set is changed
 
   - name: Restart systemd-logind to activate hostname.
@@ -164,14 +164,14 @@
       src: ssh-host-keygen.service
       dest: /etc/systemd/system/ssh-host-keygen.service
       mode: 0644
-    register: enable_ssh-host-keygen
+    register: enable_ssh_host_keygen
     when: iserver_is_template
 
   - name: Enable ssh-host-keygen service that generates SSH server keys on first boot ..
     service:
       name: ssh-host-keygen
       enabled: yes
-    when: iserver_is_template and (enable_ssh-host-keygen is changed)
+    when: enable_ssh_host_keygen is changed
 
   ### CUSTOMIZE ###
   - name: Set timezone.
