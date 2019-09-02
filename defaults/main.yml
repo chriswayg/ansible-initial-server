@@ -9,6 +9,7 @@ iserver_become: sudo # do not chanage this
 
 ### BASE PACKAGES ###
 iserver_repos:
+  - undefined
   ## Debian 10 buster example
   # - deb http://repo.myloc.de/debian buster main non-free contrib
   # - deb-src http://repo.myloc.de/debian buster main non-free contrib
