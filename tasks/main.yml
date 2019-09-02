@@ -110,7 +110,7 @@
       state: restarted
     when: new_hostname_set is changed
 
-  - name: Copy original /etc/issue (once) which is displayed before login.
+  - name: Copy original /etc/issue (once).
     command: cp /etc/issue /etc/issue.original
     args:
       creates: /etc/issue.original
