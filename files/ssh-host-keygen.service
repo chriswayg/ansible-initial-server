@@ -1,14 +1,15 @@
 [Unit]
 Description=OpenSSH Server Key Generation
 Before=ssh.service
+ConditionPathExists=/etc/run-ssh-host-keygen-once
 
 [Service]
 # remove all host keys first, so that all will be refreshed
 # only executed on first boot due to RemainAfterExit
 ExecStartPre=/usr/bin/rm -v -f /etc/ssh/*key**
 ExecStart=/usr/bin/ssh-keygen -A
+ExecStartPost=/usr/bin/rm -v -f /etc/run-ssh-host-keygen-once
 Type=oneshot
-RemainAfterExit=yes
 
 [Install]
 WantedBy=multi-user.target
