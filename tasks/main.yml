@@ -27,7 +27,7 @@
       src: default-user.j2
       dest: /etc/sudoers.d/default-user
       mode: 0440
-    when: user_exists|bool
+    when: user_exists is succeeded
 
   # (optional)
   # - name: Ensure, that members of the sodoers group can do passwordless sudo.
@@ -42,7 +42,7 @@
   #     name: "{{ iserver_user }}"
   #     groups: sudo
   #     append: yes
-  #   when: user_exists|bool
+  #   when: user_exists is succeeded
 
   ## End of block KICKSTART
   become: true
@@ -88,9 +88,6 @@
       name: "{{ iserver_hostname }}"
     register: new_hostname_set
 
-  # - name: Set domainname.
-  #   command: domainname "{{ iserver_domain }}"
-
   - name: Copy original hosts file to back it up (once).
     command: cp /etc/hosts /etc/hosts.original
     args:
@@ -100,15 +97,12 @@
     lineinfile:
       path: /etc/hosts
       state: present
-      regexp: "^{{ iserver_ip }}"
-      line: "{{ iserver_ip }}       {{ iserver_fqdn }}  {{ iserver_hostname }}"
-    when: (new_hostname_set is changed) and (not iserver_custom_etchosts)
-
-  - name: Create a custom hosts file with FQDN and hostname from a template.
-    template:
-      src: hosts.j2
-      dest: /etc/hosts
-    when: iserver_custom_etchosts
+      regexp: "{{ item.regexp }}"
+      line: "{{ item.line }}"
+    loop:
+      - { regexp: '^127.0.0.1', line: '127.0.0.1 localhost.localdomain localhost' }
+      - { regexp: '^{{ iserver_ip }}', line: '{{ iserver_ip }}       {{ iserver_fqdn }}  {{ iserver_hostname }}' }
+    when: new_hostname_set is changed
 
   - name: Restart systemd-logind to activate hostname.
     service:
@@ -122,14 +116,14 @@
       creates: /etc/issue.original
 
   # Note: run-parts doesn't run scripts with a .sh extension
-  - name: Copy script which will run when the network comes up to display IP before login.
+  - name: Copy Debian script which will run when the network comes up to display IP before login.
     template:
       src: show-ip-address.j2
       dest: /etc/network/if-up.d/show-ip-address
       mode: a+x
     when: ansible_distribution == 'Debian'
 
-  - name: Copy script which will run when the network comes up to display IP before login.
+  - name: Copy Ubuntu script which will run when the network comes up to display IP before login.
     copy:
       src: 99-show-ip-address
       dest: /etc/networkd-dispatcher/routable.d/99-show-ip-address
@@ -142,7 +136,7 @@
       user: "{{ iserver_user }}"
       state: present
       key: "{{ iserver_sshkey }}"
-    when: user_exists|bool
+    when: user_exists is succeeded
 
   # UseDNS value is set to no which avoids login delays
   # when the remote client's DNS cannot be resolved
@@ -177,8 +171,7 @@
     service:
       name: ssh-host-keygen
       enabled: yes
-    when: enable_ssh-host-keygen is changed
-    when: iserver_is_template
+    when: iserver_is_template and (enable_ssh-host-keygen is changed)
 
   ### CUSTOMIZE ###
   - name: Set timezone.
@@ -220,13 +213,13 @@
         {{ iserver_bashrc }}
       marker: "# {mark} ANSIBLE MANAGED BLOCK"
     loop: "{{ iserver_users_dirs }}"
-    when: user_exists|bool
+    when: user_exists is succeeded
 
   - name: Customize default user bashrc - prompt is blue.
     lineinfile:
       path: /home/{{ iserver_user }}/.bashrc
       line: 'export PS1="\[\033[1;34m\][\u@\h:\w]$\[\033[0m\] "'
-    when: user_exists|bool
+    when: user_exists is succeeded
 
   - name: Customize root bashrc - prompt is red.
     lineinfile:
