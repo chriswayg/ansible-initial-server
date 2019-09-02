@@ -16,11 +16,18 @@
       - sudo
 
   ### SUDOERS ###
+  - name: Check if iserver_user exists.
+    shell: id -u "{{ iserver_user }}" > /dev/null 2>&1
+    ignore_errors: True
+    changed_when: false
+    register: user_exists
+
   - name: Add the default user with passwordless sudo to sodoers.d
     template:
       src: default-user.j2
       dest: /etc/sudoers.d/default-user
       mode: 0440
+    when: user_exists|bool
 
   # (optional)
   # - name: Ensure, that members of the sodoers group can do passwordless sudo.
@@ -35,6 +42,7 @@
   #     name: "{{ iserver_user }}"
   #     groups: sudo
   #     append: yes
+  #   when: user_exists|bool
 
   ## End of block KICKSTART
   become: true
@@ -47,12 +55,12 @@
     meta: reset_connection
 
   ### BASE PACKAGES ###
-  # replaces sources.list if iserver_repos have a repo defined
+  # replaces sources.list if iserver_repos has repos defined
   - name: Move original /etc/apt/sources.list to back it up (once).
     command: mv /etc/apt/sources.list /etc/apt/sources.list.original
     args:
       creates: /etc/apt/sources.list.original
-    when: iserver_repos is defined
+    when: iserver_repos[0] != "undefined"
 
   # this requires python-apt
   - name: Add a set of specified repositories into sources list.
@@ -60,7 +68,7 @@
       repo: "{{ item }}"
       state: present
     loop: "{{ iserver_repos }}"
-    when: iserver_repos is defined
+    when: iserver_repos[0] != "undefined"
 
   - name: Ensure, that all packages are updated and upgraded.
     apt:
@@ -134,6 +142,7 @@
       user: "{{ iserver_user }}"
       state: present
       key: "{{ iserver_sshkey }}"
+    when: user_exists|bool
 
   # UseDNS value is set to no which avoids login delays
   # when the remote client's DNS cannot be resolved
@@ -204,23 +213,25 @@
     when: ansible_distribution == 'Ubuntu'
 
   # or do it line by line (slower)
-  - name: Add a block of bashrc config to all users.
+  - name: Add a block of bashrc config to root and the default user.
     blockinfile:
       path: "{{ item }}/.bashrc"
       block: |
         {{ iserver_bashrc }}
       marker: "# {mark} ANSIBLE MANAGED BLOCK"
     loop: "{{ iserver_users_dirs }}"
-
-  - name: Customize root bashrc - prompt is red.
-    lineinfile:
-      path: /root/.bashrc
-      line: 'export PS1="\[\033[1;31m\][\u@\h:\w]#\[\033[0m\] "'
+    when: user_exists|bool
 
   - name: Customize default user bashrc - prompt is blue.
     lineinfile:
       path: /home/{{ iserver_user }}/.bashrc
       line: 'export PS1="\[\033[1;34m\][\u@\h:\w]$\[\033[0m\] "'
+    when: user_exists|bool
+
+  - name: Customize root bashrc - prompt is red.
+    lineinfile:
+      path: /root/.bashrc
+      line: 'export PS1="\[\033[1;31m\][\u@\h:\w]#\[\033[0m\] "'
 
   ### CLOUD ###
   - name: Enable the serial console by modifying grub.
