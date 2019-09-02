@@ -3,6 +3,10 @@ Description=OpenSSH Server Key Generation
 Before=ssh.service
 
 [Service]
+# remove all host keys first, so that all will be refreshed
+# multiple lines are allowed in oneshot
+# only executed on first boot due to RemainAfterExit
+ExecStart=/usr/bin/rm -v -f /etc/ssh/*key**
 ExecStart=/usr/bin/ssh-keygen -A
 Type=oneshot
 RemainAfterExit=yes
