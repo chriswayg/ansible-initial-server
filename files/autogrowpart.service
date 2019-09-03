@@ -1,4 +1,4 @@
-# {{ ansible_managed }}
+# Ansible managed
 
 [Unit]
 Description=Automatically Grow Partition after resize by Proxmox.

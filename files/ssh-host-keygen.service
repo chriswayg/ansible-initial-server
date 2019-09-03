@@ -1,4 +1,4 @@
-# {{ ansible_managed }}
+# Ansible managed
 
 [Unit]
 Description=OpenSSH Server Key Generation

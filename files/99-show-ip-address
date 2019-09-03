@@ -1,5 +1,5 @@
 #!/bin/bash
-# {{ ansible_managed }}
+# Ansible managed
 
 cp /etc/issue.original /etc/issue
 printf "SSH key fingerprint: \n$(ssh-keygen -l -f /etc/ssh/ssh_host_ecdsa_key.pub)\n\n" >> /etc/issue

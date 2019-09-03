@@ -1,5 +1,5 @@
 #!/bin/bash
-# {{ ansible_managed }}
+# Ansible managed
 
 growpart -N /dev/sda 1
 if [ $? -eq 0 ]; then
