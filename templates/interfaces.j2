@@ -6,5 +6,5 @@ iface {{ iserver_interface }} inet static
     address {{ iserver_ip }}
     netmask 255.255.255.255
     # The Proxmox Main IP as gateway
-    pointopoint {{ iserver_prox_main_ip }}
-    gateway {{ iserver_prox_main_ip }}
+    pointopoint {{ iserver_host_main_ip }}
+    gateway {{ iserver_host_main_ip }}
