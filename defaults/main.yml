@@ -5,7 +5,7 @@
 # use the name of the default user which was used during installation
 # this Ansible role is not intended to add or change a default user
 iserver_user: deploy
-iserver_become: sudo # do not chanage this
+iserver_become: sudo ## do not chanage this ##
 
 ### BASE PACKAGES ###
 iserver_repos:
@@ -30,13 +30,13 @@ iserver_repos:
 
 # packages we want on every server
 iserver_packages:
-  - qemu-guest-agent
-  - haveged
+  - qemu-guest-agent  # needed by packer
+  - haveged           # prevent vm boot delays
+  - cloud-guest-utils # used by growpart
+  - verse             # used in .profile
   - curl
   - psmisc
   - net-tools
-  - cloud-guest-utils
-  - verse
   # - lsof
   # - lshw
   # - ncdu
