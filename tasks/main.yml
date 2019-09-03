@@ -56,12 +56,18 @@
 
   ### BASE PACKAGES ###
   # replaces sources.list repos, if iserver_repos has repos defined.
-  # keep an empty sources.list so that Ubuntu will not complain.
   - name: Move original /etc/apt/sources.list to back it up (once).
-    command: mv /etc/apt/sources.list /etc/apt/sources.list.original && touch /etc/apt/sources.list
+    command: mv /etc/apt/sources.list /etc/apt/sources.list.original
     args:
       creates: /etc/apt/sources.list.original
     when: iserver_repos[0] != "undefined"
+
+  # so that Ubuntu will not complain. will not overwrite the file.
+  - name: Ensure that there is at least a sources.list file placeholder.
+    copy:
+      content: ""
+      dest: /etc/apt/sources.list
+      force: no
 
   # this requires python-apt.
   # at least two repos need to be defined. repos are added to sources.list.d/
