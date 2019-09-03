@@ -18,6 +18,16 @@ iserver_repos:
   # - deb http://deb.debian.org/debian buster-updates main contrib non-free
   # - deb-src http://deb.debian.org/debian buster-updates main contrib non-free
 
+  ## Ubuntu 18.04 example
+  # - deb http://repo.myloc.de/ubuntu/ bionic main restricted universe multiverse
+  # - deb-src http://repo.myloc.de/ubuntu/ bionic main restricted universe multiverse
+  # - deb http://repo.myloc.de/ubuntu/ bionic-updates main restricted universe multiverse
+  # - deb-src http://repo.myloc.de/ubuntu/ bionic-updates main restricted universe multiverse
+  # - deb http://repo.myloc.de/ubuntu/ bionic-backports main restricted universe multiverse
+  # - deb-src http://repo.myloc.de/ubuntu/ bionic-backports main restricted universe multiverse
+  # - deb http://security.ubuntu.com/ubuntu bionic-security main restricted universe multiverse
+  # - deb-src http://security.ubuntu.com/ubuntu bionic-security main restricted universe multiverse
+
 # packages we want on every server
 iserver_packages:
   - qemu-guest-agent
@@ -65,17 +75,21 @@ iserver_user_profile: |
       echo ""
   fi
 
-iserver_bashrc: |
+# iserver_bashrc block added to:
+iserver_users_dirs:
+  - /root
+  - /home/{{ iserver_user }}
+
+# in Ubuntu, this is redundant
+iserver_bashrc_debian: |
   export LS_OPTIONS='--color=auto'
   eval "`dircolors`"
   alias ls='ls $LS_OPTIONS'
   alias ll='ls $LS_OPTIONS -l'
   alias l='ls $LS_OPTIONS -lA'
 
-# iserver_bashrc block added to:
-iserver_users_dirs:
-  - /root
-  - /home/{{ iserver_user }}
+iserver_bashrc_ubuntu: |
+  # no-op
 
 ### CLEANUP (for KVM template) ###
 iserver_is_template: false
