@@ -1,0 +1,22 @@
+# DISABLE SWAPFILE
+
+# skipped, if /swapfile does not exist
+- name: Disable swap.
+  command: swapoff -a
+  args:
+    removes: /swapfile
+
+- name: Ensure swap file is disabled in /etc/fstab.
+  mount:
+    name: none
+    src: /swapfile
+    fstype: swap
+    opts: sw
+    passno: 0
+    dump: 0
+    state: absent
+
+- name: Ensure swap file doesn't exist.
+  file:
+    path: /swapfile
+    state: absent

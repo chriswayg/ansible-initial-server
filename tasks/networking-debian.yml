@@ -1,0 +1,12 @@
+# Note: run-parts doesn't run scripts with a .sh extension
+- name: Copy Debian script which will run when the network comes up to display IP before login.
+  template:
+    src: show-ip-address.j2
+    dest: /etc/network/if-up.d/show-ip-address
+    mode: a+x
+
+- name: Set fixed IP via network/interfaces.
+  template:
+    src: interfaces.j2
+    dest: /etc/network/interfaces
+  when: set_fixed_IP

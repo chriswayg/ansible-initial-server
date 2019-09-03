@@ -1,0 +1,26 @@
+- name: Copy Ubuntu script which will run when the network comes up to display IP before login.
+  copy:
+    src: 99-show-ip-address
+    dest: /etc/networkd-dispatcher/routable.d/99-show-ip-address
+    mode: a+x
+
+- name: Set fixed IP
+  block:
+  # netplan only uses files with .yaml extension (not .yml or .bak)
+  - name: Backup any existing netplan configs (once).
+    shell: for f in *.yaml; do mv -v -- "$f" "${f%.yaml}.bak"; done 2> /dev/null || true
+    args:
+      chdir: /etc/netplan/
+      creates: /etc/netplan/01-static-routed-ip.yaml
+
+  - name: Set fixed IP via Netplan.
+    template:
+      src: 01-static-routed-ip.yaml.j2
+      dest: /etc/netplan/01-static-routed-ip.yaml
+    register: netplan_generate_config
+
+  - name: Generating and Applying Netplan Configuration.
+    command: netplan generate && netplan apply
+    when: netplan_generate_config is changed
+  ## End of block Set fixed IP
+  when: set_fixed_IP
