@@ -63,6 +63,7 @@ iserver_nameservers: 1.1.1.1,1.0.0.1
 
 ### SSH ###
 iserver_sshkey: "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_rsa.pub') }}"
+iserver_ssh_banner: none # or /etc/ssh/issue.net
 
 ### CUSTOMIZE ###
 iserver_timezone: UTC

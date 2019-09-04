@@ -143,7 +143,14 @@
       - { regexp: '^PermitRootLogin', line: 'PermitRootLogin no' }
       - { regexp: '^PasswordAuthentication', line: 'PasswordAuthentication no' }
       - { regexp: '^UseDNS', line: 'UseDNS no' }
+      - { regexp: '^Banner', line: 'Banner {{ iserver_ssh_banner }}' }
     register: restart_ssh
+
+  - name: Add a warning banner, shown before SSH login.
+    copy:
+      src: issue.net
+      dest: "{{ ssh_server_banner }}"
+    when: ssh_server_banner != "none"
 
   - name: Restart SSH.
     service:
