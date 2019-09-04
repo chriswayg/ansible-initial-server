@@ -217,6 +217,12 @@
       line: 'ENABLED=0'
     when: ansible_distribution == 'Ubuntu'
 
+  - name: Remove legal notice from Ubuntu user logins.
+    copy:
+      content: " "
+      dest: /etc/legal
+    when: ansible_distribution == 'Ubuntu'
+
   - name: Copy the file which will show a verse via motd.
     copy:
       src: 85-motd-verse
@@ -231,7 +237,7 @@
         {{ iserver_user_profile }}
       marker: "# {mark} ANSIBLE MANAGED BLOCK"
 
-  - name: Add a block of bashrc config to root and the default user.
+  - name: Add a block of bashrc config to root and the default user on Debian.
     blockinfile:
       path: "{{ item }}/.bashrc"
       block: |
@@ -240,7 +246,7 @@
     loop: "{{ iserver_users_dirs }}"
     when: ansible_distribution == 'Debian'
 
-  - name: Add a block of bashrc config to root and the default user.
+  - name: Add a block of bashrc config to root and the default user on Ubuntu.
     blockinfile:
       path: "{{ item }}/.bashrc"
       block: |
