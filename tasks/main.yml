@@ -190,7 +190,7 @@
       creates: /etc/motd.original
     when: ansible_distribution == 'Debian'
 
-  - name: Copy the file which will show a motd welcome after login.
+  - name: Copy the file which will show a welcome motd after login.
     copy:
       src: 20-motd-welcome
       dest: /etc/update-motd.d/20-motd-welcome
@@ -220,7 +220,7 @@
   - name: Copy the file which will show a verse via motd.
     copy:
       src: 85-motd-verse
-      dest: /etc/update-motd.d/20-motd-welcome
+      dest: /etc/update-motd.d/85-motd-verse
       mode: a+x
     when: iserver_verse_enabled
 
