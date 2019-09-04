@@ -149,8 +149,8 @@
   - name: Add a warning banner, shown before SSH login.
     copy:
       src: issue.net
-      dest: "{{ ssh_server_banner }}"
-    when: ssh_server_banner != "none"
+      dest: "{{ iserver_ssh_banner }}"
+    when: iserver_ssh_banner != "none"
 
   - name: Restart SSH.
     service:
