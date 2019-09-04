@@ -1,23 +1,37 @@
 ansible-initial-server
 ======================
 
-Initial configuration of a freshly installed Debian server to be used as a template in KVM.
+Initial configuration of a freshly installed Debian or Ubuntu server to be used as a template in KVM.
 
 Requirements
 ------------
 
 ### Install from ISO
-Tested with a default install of Debian 10 net-install ISO, also tested with Ubuntu 18.04
+Tested with a default install of Debian 10 net-install ISO
 - installed from debian-10.x.y-amd64-netinst.iso
-- Software: Standard System Utilities and SSH Server
-- Default user `deploy` (custumizable)
+
+Also tested with a default install of Ubuntu 18.04 server ISO
+- installed from ubuntu-18.04.3-server-amd64.iso (not live-server)
+
+- Software: Standard System Utilities and SSH Server (Standard and Server in Ubuntu)
+- Default user `deploy` (customizable)
 - Partitions: 1 primary ext4 root partition /dev/sda1 (no swap); Grub on MBR
 - an auto-install http/preseed.cfg can be used to speed-up the initial install
 - used by [packer-proxmox-templates](https://github.com/chriswayg/packer-proxmox-templates)
 
+### Configurations
+- qemu-guest-agent for Packer SSH and in Proxmox for shutdown and backups
+- haveged random number generator to speed up boot
+- passwordless sudo for default user 'deploy' (name can be changed)
+- SSH public key installed for default user
+- display IP and SSH fingerprint before console login
+- generates new SSH host keys on first boot to avoid duplicates in cloned VMs
+- automatically grow partition after resizing VM disk
+- optional SSH warning banner
+- optional Verse of the Day displayed on motd
+
 ### After Installation from ISO
 - check networking, that the VM is reachable via SSH
-- no need to change `sshd_config` to `PermitRootLogin yes`, because Ansible can authenticate with the initial user password and then 'become' root using 'su'.
 
 Important Role Variables
 --------------
@@ -39,7 +53,7 @@ Example Playbook
 ----------------
 
 Name of playbook: `server-template.yml`
-- use the default user name used during iso installation
+- make sure the correct username is used, which is the default user name set up during iso installation
 
 ```yml
 - name: Initial configuration of a server.
@@ -53,9 +67,9 @@ Name of playbook: `server-template.yml`
         iserver_user: administrator
 ```
 
-The Debian installer creates a root user with a root password, who is not permitted to SSH in to the server. Sudo is not installed by default. Therefore the default user can SSH into Debian, but has to use `su` to do roots tasks.
+The Debian installer by default creates a root user with a root password, who is not permitted to SSH in to the server. Sudo is not installed by default. Therefore the default user can SSH into Debian, but has to use `su` to do roots tasks. There is no need to change `sshd_config` to `PermitRootLogin yes`, because this Ansible role can authenticate with the initial user password and then 'become' root using 'su'.
 
-Only for the first run on Debian (before the SSH key has been transferred):
+Only for the first run on Debian (before sudo is active & the SSH key has been transferred):
 
 - `ansible-playbook --ask-pass --ask-become-pass -e iserver_become=su  -v server-template.yml`
 
@@ -67,11 +81,11 @@ For subsequent runs or on installations which have sudo and SSH-key already enab
 
 For the first run on Ubuntu (before the SSH key has been transferred):
 
-- `ansible-playbook -u ubuntu --ask-pass --ask-become-pass -v server-template.yml`
+- `ansible-playbook --ask-pass --ask-become-pass -v server-template.yml`
 
 For subsequent runs:
 
-- `ansible-playbook -u ubuntu -vv server-template.yml`
+- `ansible-playbook -vv server-template.yml`
 
 
 License
