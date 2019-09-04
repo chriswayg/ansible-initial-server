@@ -33,7 +33,7 @@ iserver_packages:
   - qemu-guest-agent  # needed by packer
   - haveged           # prevent vm boot delays
   - cloud-guest-utils # used by growpart
-  - verse             # used in .profile
+  - verse             # used in motd (optional)
   - curl
   - psmisc
   - net-tools
@@ -68,13 +68,9 @@ iserver_ssh_banner: none # or /etc/ssh/issue.net
 ### CUSTOMIZE ###
 iserver_timezone: UTC
 
-# this needs verse to be installed
 iserver_user_profile: |
-  if [ -f /usr/bin/verse ]; then
-      echo ""
-      /usr/bin/verse
-      echo ""
-  fi
+  # no-op
+
 
 # iserver_bashrc block added to:
 iserver_users_dirs:
@@ -91,6 +87,9 @@ iserver_bashrc_debian: |
 
 iserver_bashrc_ubuntu: |
   # no-op
+
+# needs 'verse' installed
+iserver_verse_enabled: false
 
 ### CLEANUP (for KVM template) ###
 iserver_is_template: false
