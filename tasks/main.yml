@@ -62,13 +62,6 @@
       creates: /etc/apt/sources.list.original
     when: iserver_repos[0] != "undefined"
 
-  # so that Ubuntu will not complain. will not overwrite the file.
-  - name: Ensure that there is at least a sources.list file placeholder.
-    copy:
-      content: ""
-      dest: /etc/apt/sources.list
-      force: no
-
   # this requires python-apt.
   # at least two repos need to be defined. repos are added to sources.list.d/
   - name: Add a set of specified repositories into sources list.
@@ -77,6 +70,13 @@
       state: present
     loop: "{{ iserver_repos }}"
     when: iserver_repos[0] != "undefined"
+
+  # so that Ubuntu will not complain about missing sources.list
+  - name: Ensure that there is at least a sources.list file placeholder.
+    copy:
+      content: "# Ansible managed # active repos are in /etc/apt/sources.list.d/*"
+      dest: /etc/apt/sources.list
+      force: no
 
   - name: Ensure, that all packages are updated and upgraded.
     apt:
