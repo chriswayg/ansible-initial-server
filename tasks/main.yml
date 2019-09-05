@@ -131,8 +131,7 @@
       key: "{{ iserver_sshkey }}"
     when: user_exists is succeeded
 
-  # UseDNS value is set to no which avoids login delays
-  # when the remote client's DNS cannot be resolved
+  #'UseDNS no' avoids login delays when the remote client's DNS cannot be resolved
   - name: Disallow root SSH access, only allow SSH key login; UseDNS no.
     lineinfile:
       path: /etc/ssh/sshd_config
@@ -144,6 +143,7 @@
       - { regexp: '^PasswordAuthentication', line: 'PasswordAuthentication no' }
       - { regexp: '^UseDNS', line: 'UseDNS no' }
       - { regexp: '^Banner', line: 'Banner {{ iserver_ssh_banner }}' }
+      - { regexp: '^Port', line: 'Port {{ iserver_ssh_port }}' }
     register: restart_ssh
 
   - name: Add a warning banner, shown before SSH login.

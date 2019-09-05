@@ -62,6 +62,7 @@ iserver_ip: 127.0.1.1
 iserver_nameservers: 1.1.1.1,1.0.0.1
 
 ### SSH ###
+iserver_ssh_port: 22
 iserver_sshkey: "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_rsa.pub') }}"
 iserver_ssh_banner: none # or /etc/ssh/issue.net
 
@@ -70,7 +71,6 @@ iserver_timezone: UTC
 
 iserver_user_profile: |
   # no-op
-
 
 # iserver_bashrc block added to:
 iserver_users_dirs:
