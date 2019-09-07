@@ -3,6 +3,8 @@ ansible-initial-server
 
 Initial configuration of a freshly installed Debian or Ubuntu server to be used as a template in KVM.
 
+- use the latest tagged version which has been tested more thoroughly than 'master'
+
 Requirements
 ------------
 

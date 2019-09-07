@@ -1,12 +1,18 @@
 # DISABLE SWAPFILE
+# Ubuntu 'server' uses /swapfile
+# Ubuntu 'live-server' uses /swap.img
 
-# skipped, if /swapfile does not exist
-- name: Disable swap.
+- name: Disable swap if /swapfile exists.
   command: swapoff -a
   args:
     removes: /swapfile
 
-- name: Ensure swap file is disabled in /etc/fstab.
+- name: Disable swap if /swap.img exists.
+  command: swapoff -a
+  args:
+    removes: /swap.img
+
+- name: Ensure swapfile is disabled in /etc/fstab.
   mount:
     name: none
     src: /swapfile
@@ -16,7 +22,22 @@
     dump: 0
     state: absent
 
-- name: Ensure swap file doesn't exist.
+- name: Ensure swap.img is disabled in /etc/fstab.
+  mount:
+    name: none
+    src: /swap.img
+    fstype: swap
+    opts: sw
+    passno: 0
+    dump: 0
+    state: absent
+
+- name: Ensure swapfile doesn't exist.
   file:
     path: /swapfile
+    state: absent
+
+- name: Ensure swap.img doesn't exist.
+  file:
+    path: /swap.img
     state: absent
