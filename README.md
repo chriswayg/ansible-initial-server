@@ -21,16 +21,31 @@ Also tested with a default install of Ubuntu 18.04 server ISO
 - an auto-install http/preseed.cfg can be used to speed-up the initial install
 - used by [packer-proxmox-templates](https://github.com/chriswayg/packer-proxmox-templates)
 
-### Configurations
+### Configuration features
 - qemu-guest-agent for Packer SSH and in Proxmox for shutdown and backups
 - haveged random number generator to speed up boot
 - passwordless sudo for default user 'deploy' (name can be changed)
-- SSH public key installed for default user
+- SSH public key installed for default user with only key login
+- no login for root
 - display IP and SSH fingerprint before console login
+- serial console
 - generates new SSH host keys on first boot to avoid duplicates in cloned VMs
 - automatically grow partition after resizing VM disk
 - optional SSH warning banner
 - optional Verse of the Day displayed on motd
+
+#### Vanilla
+Running the role with the `vanilla` tag will only make minimal modifications to the system after an initial ISO installation:
+- passwordless sudo for default user 'deploy' (name can be changed)
+- SSH public key installed for default user with only key login
+- no login for root
+- serial console
+- no change to apt sources.list and no installation of additional base packages
+- set hostname and /etc/hosts
+- set timezone
+- no customization to motd, bashrc, etc.
+- does not disable Ubuntu swapfile
+
 
 ### After Installation from ISO
 - check networking, that the VM is reachable via SSH

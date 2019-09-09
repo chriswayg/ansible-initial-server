@@ -47,12 +47,16 @@
   ## End of block KICKSTART
   become: true
   become_method: "{{ iserver_become }}"
+  tags:
+    - vanilla
 
 ## Now that the default user can do passwordless sudo, run the rest with sudo.
 - name: MAIN
   block:
   - name: Reset SSH connection to allow user changes to affect 'current login user'.
     meta: reset_connection
+    tags:
+      - vanilla
 
   ### BASE PACKAGES ###
   # replaces sources.list repos, if iserver_repos has repos defined.
@@ -83,6 +87,8 @@
       upgrade: "yes"
       update_cache: yes
       cache_valid_time: 86400 #One day
+    tags:
+      - vanilla
 
   - name: Ensure that initial packages are installed.
     apt:
@@ -99,6 +105,8 @@
     hostname:
       name: "{{ iserver_hostname }}"
     register: restart_systemd_logind
+    tags:
+      - vanilla
 
   - include_tasks: networking-debian.yml
     when: ansible_distribution == 'Debian'
@@ -110,18 +118,24 @@
     command: cp /etc/hosts /etc/hosts.original
     args:
       creates: /etc/hosts.original
+    tags:
+      - vanilla
 
   - name: Create new hosts file.
     template:
       src: hosts.j2
       dest: /etc/hosts
     register: restart_systemd_logind
+    tags:
+      - vanilla
 
   - name: Restart systemd-logind.
     service:
       name: systemd-logind
       state: restarted
     when: restart_systemd_logind is changed
+    tags:
+      - vanilla
 
   ### SSH ###
   - name: Ensure, that the default user has an SHH authorized key.
@@ -130,6 +144,8 @@
       state: present
       key: "{{ iserver_sshkey }}"
     when: user_exists is succeeded
+    tags:
+      - vanilla
 
   #'UseDNS no' avoids login delays when the remote client's DNS cannot be resolved
   - name: Disallow root SSH access, only allow SSH key login; UseDNS no.
@@ -145,6 +161,8 @@
       - { regexp: '^Banner', line: 'Banner {{ iserver_ssh_banner }}' }
       - { regexp: '^Port', line: 'Port {{ iserver_ssh_port }}' }
     register: restart_ssh
+    tags:
+      - vanilla
 
   - name: Add a warning banner, shown before SSH login.
     copy:
@@ -157,6 +175,8 @@
       name: ssh
       state: restarted
     when: restart_ssh is changed
+    tags:
+      - vanilla
 
   # SSH-HOST-KEYGEN (for KVM template)
   - name: Copy systemd unitfile for OpenSSH Server Key Generation.
@@ -183,6 +203,8 @@
   - name: Set timezone.
     timezone:
       name: "{{ iserver_timezone }}"
+    tags:
+      - vanilla
 
   - name: Move the original /etc/motd to back it up (once).
     command: mv /etc/motd /etc/motd.original
@@ -273,10 +295,14 @@
       regexp: '^GRUB_CMDLINE_LINUX_DEFAULT='
       line: 'GRUB_CMDLINE_LINUX_DEFAULT="console=ttyS0 console=tty0"'
     register: update_grub
+    tags:
+      - vanilla
 
   - name: Update grub.
     command: update-grub
     when: update_grub is changed
+    tags:
+      - vanilla
 
   - include_tasks: swapfile-ubuntu.yml
     when: ansible_distribution == 'Ubuntu'
@@ -321,17 +347,23 @@
       dest: /tmp/template-cleanup.sh
       mode: a+x
     when: iserver_is_template
+    tags:
+      - vanilla
 
   - name: Run the cleanup script for VM templates (only once).
     shell: /tmp/template-cleanup.sh
     args:
       creates: /etc/.template-cleanup.done
     when: iserver_is_template
+    tags:
+      - vanilla
 
   # or use '*'
   - name: Prevent password authentication for root.
     user:
       name: root
       password: '!'
+    tags:
+      - vanilla
   ## End of block MAIN
   become: true
