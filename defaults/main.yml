@@ -45,12 +45,19 @@ iserver_packages:
   # - pv
   # - screen
 
+iserver_obsd_packages:
+  - colorls # used by .profile
+  - nano    # set as default editor in .profile
+  - pstree
+  - wget
+
 ### NETWORKING ###
 iserver_hostname: iserver-kvm
 iserver_domain: unassigned.domain
 iserver_fqdn: "{{ iserver_hostname }}.{{ iserver_domain }}"
 
 iserver_interface: ens18
+iserver_obsd_interface: vio0
 set_fixed_IP: false
 # Add here main IP of the host
 iserver_host_main_ip: 127.1.1.1
@@ -71,6 +78,24 @@ iserver_timezone: UTC
 
 iserver_user_profile: |
   # no-op
+
+iserver_obsd_root_profile: |
+  PS1='\[\033[1;31m\][\u@\h:\w]#\[\033[0m\] '
+  export PS1
+  LSCOLORS=gxfxcxdxbxegedabagacad
+  export LSCOLORS
+  alias ls='colorls -G'
+  EDITOR=/usr/local/bin/nano
+  export EDITOR
+
+iserver_obsd_user_profile: |
+  PS1='\[\033[1;34m\][\u@\h:\w]$\[\033[0m\] '
+  export PS1
+  LSCOLORS=gxfxcxdxbxegedabagacad
+  export LSCOLORS
+  alias ls='colorls -G'
+  EDITOR=/usr/local/bin/nano
+  export EDITOR
 
 # iserver_bashrc block added to:
 iserver_users_dirs:
