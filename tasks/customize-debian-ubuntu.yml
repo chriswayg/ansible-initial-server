@@ -1,0 +1,80 @@
+- name: Move the original /etc/motd to back it up (once).
+  command: mv /etc/motd /etc/motd.original
+  args:
+    creates: /etc/motd.original
+  when: ansible_distribution == 'Debian'
+
+- name: Copy the file which will show a welcome motd after login.
+  copy:
+    src: 20-motd-welcome
+    dest: /etc/update-motd.d/20-motd-welcome
+    mode: a+x
+  when: ansible_distribution == 'Debian'
+
+- name: Remove Ubuntu help-text from motd.
+  file:
+    path: /etc/update-motd.d/10-help-text
+    mode: a-x
+  when: ansible_distribution == 'Ubuntu'
+
+- name: Remove Ubuntu livepatch notifications from motd.
+  file:
+    path: /etc/update-motd.d/80-livepatch
+    mode: a-x
+  when: ansible_distribution == 'Ubuntu'
+
+- name: Remove Ubuntu ads from motd
+  lineinfile:
+    path: /etc/default/motd-news
+    state: present
+    regexp: '^ENABLED='
+    line: 'ENABLED=0'
+  when: ansible_distribution == 'Ubuntu'
+
+- name: Remove legal notice from Ubuntu user logins.
+  copy:
+    content: " "
+    dest: /etc/legal
+  when: ansible_distribution == 'Ubuntu'
+
+- name: Copy the file which will show a verse via motd.
+  copy:
+    src: 85-motd-verse
+    dest: /etc/update-motd.d/85-motd-verse
+    mode: a+x
+  when: iserver_verse_enabled
+
+- name: Add a block of commands in the default user profile.
+  blockinfile:
+    path: "/home/{{ iserver_user }}/.profile"
+    block: |
+      {{ iserver_user_profile }}
+    marker: "# {mark} ANSIBLE MANAGED BLOCK"
+
+- name: Add a block of bashrc config to root and the default user (Debian).
+  blockinfile:
+    path: "{{ item }}/.bashrc"
+    block: |
+      {{ iserver_bashrc_debian }}
+    marker: "# {mark} ANSIBLE MANAGED BLOCK"
+  loop: "{{ iserver_users_dirs }}"
+  when: ansible_distribution == 'Debian'
+
+- name: Add a block of bashrc config to root and the default user (Ubuntu).
+  blockinfile:
+    path: "{{ item }}/.bashrc"
+    block: |
+      {{ iserver_bashrc_ubuntu }}
+    marker: "# {mark} ANSIBLE MANAGED BLOCK"
+  loop: "{{ iserver_users_dirs }}"
+  when: ansible_distribution == 'Ubuntu'
+
+- name: Customize default user bashrc - prompt is blue.
+  lineinfile:
+    path: /home/{{ iserver_user }}/.bashrc
+    line: 'export PS1="\[\033[1;34m\][\u@\h:\w]$\[\033[0m\] "'
+
+- name: Customize root bashrc - prompt is red.
+  lineinfile:
+    path: /root/.bashrc
+    line: 'export PS1="\[\033[1;31m\][\u@\h:\w]#\[\033[0m\] "'

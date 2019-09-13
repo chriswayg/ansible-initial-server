@@ -1,0 +1,9 @@
+- name: Update all packages on the system
+  openbsd_pkg:
+    name: '*'
+    state: latest
+
+- name: Ensure that initial packages are installed.
+  openbsd_pkg:
+    name: "{{ iserver_obsd_packages }}"
+    state: present

@@ -1,0 +1,18 @@
+- name: Copy the original /etc/motd to back it up (once).
+  command: cp /etc/motd /etc/motd.original
+  args:
+    creates: /etc/motd.original
+
+- name: Add a block of commands in the root user profile.
+  blockinfile:
+    path: "/root/.profile"
+    block: |
+      {{ iserver_obsd_root_profile }}
+    marker: "# {mark} ANSIBLE MANAGED BLOCK"
+
+- name: Add a block of commands in the default user profile.
+  blockinfile:
+    path: "/home/{{ iserver_user }}/.profile"
+    block: |
+      {{ iserver_obsd_user_profile }}
+    marker: "# {mark} ANSIBLE MANAGED BLOCK"

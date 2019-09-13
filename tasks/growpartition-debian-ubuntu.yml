@@ -1,0 +1,19 @@
+# GROW PARTITION
+- name: Copy systemd unitfile to automatically Grow Partition after resize by Proxmox.
+  copy:
+    src: autogrowpart.service
+    dest: /etc/systemd/system/autogrowpart.service
+    mode: 0644
+  register: enable_autogrowpart
+
+- name: Copy script to automatically Grow Partition after resize by Proxmox.
+  copy:
+    src: auto_grow_partition.sh
+    dest: /usr/local/bin/auto_grow_partition.sh
+    mode: a+x
+
+- name: Enable the autogrowpart service.
+  service:
+    name: autogrowpart
+    enabled: yes
+  when: enable_autogrowpart is changed

@@ -1,0 +1,11 @@
+- name: Configure the boot process to use the serial port as a console.
+  copy:
+    src: "set tty com0"
+    dest: /ect/boot.conf
+
+- name: Change /etc/ttys to get a login prompt at a serial console.
+  lineinfile:
+    path: /etc/ttys
+    state: present
+    regexp: '^console'
+    line:   'console	"/usr/libexec/getty std.9600"	vt220	on  secure'

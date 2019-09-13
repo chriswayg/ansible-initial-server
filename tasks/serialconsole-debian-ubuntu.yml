@@ -1,0 +1,15 @@
+- name: Enable the serial console by modifying grub.
+  lineinfile:
+    path: /etc/default/grub
+    state: present
+    regexp: '^GRUB_CMDLINE_LINUX_DEFAULT='
+    line: 'GRUB_CMDLINE_LINUX_DEFAULT="console=ttyS0 console=tty0"'
+  register: update_grub
+  tags:
+    - vanilla
+
+- name: Update grub.
+  command: update-grub
+  when: update_grub is changed
+  tags:
+    - vanilla
