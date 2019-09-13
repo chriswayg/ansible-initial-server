@@ -1,0 +1,20 @@
+  # SSH-HOST-KEYGEN (for KVM template)
+  - name: Copy systemd unitfile for OpenSSH Server Key Generation.
+    copy:
+      src: ssh-host-keygen.service
+      dest: /etc/systemd/system/ssh-host-keygen.service
+      mode: 0644
+    register: enable_ssh_host_keygen
+    when: iserver_is_template
+
+  - name: Enable ssh-host-keygen service that generates new SSH host keys on first boot.
+    service:
+      name: ssh-host-keygen
+      enabled: yes
+    when: enable_ssh_host_keygen is changed
+
+  - name: Create a file so that ssh-host-keygen.service will run once.
+    file:
+      path: /etc/run-ssh-host-keygen-once
+      state: touch
+    when: enable_ssh_host_keygen is changed
