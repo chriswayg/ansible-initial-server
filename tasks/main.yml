@@ -138,8 +138,7 @@
       - vanilla
 
   - name: Apply network configuration changes (OpenBSD).
-    service:
-      command: sh /etc/netstart
+    command: sh /etc/netstart
     when: apply_network_config is changed and ansible_distribution == 'OpenBSD'
     tags:
       - vanilla
