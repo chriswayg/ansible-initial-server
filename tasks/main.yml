@@ -87,8 +87,15 @@
       - vanilla
 
   ### NETWORKING ###
+  - name: Create a blank /etc/issue, if it does not exist.
+    file:
+      path: /etc/issue
+      state: touch
+      modification_time: preserve
+      access_time: preserve
+
   - name: Copy original /etc/issue (once).
-    command: touch -a /etc/issue && cp /etc/issue /etc/issue.original
+    command: cp /etc/issue /etc/issue.original
     args:
       creates: /etc/issue.original
 
