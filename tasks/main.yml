@@ -88,7 +88,7 @@
 
   ### NETWORKING ###
   - name: Copy original /etc/issue (once).
-    command: cp /etc/issue /etc/issue.original
+    command: touch -a /etc/issue && cp /etc/issue /etc/issue.original
     args:
       creates: /etc/issue.original
 
