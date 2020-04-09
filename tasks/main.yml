@@ -176,11 +176,19 @@
       dest: "{{ iserver_ssh_banner }}"
     when: iserver_ssh_banner != "none"
 
-  - name: Restart SSH.
+  - name: Restart SSH server.
     service:
       name: ssh
       state: restarted
-    when: restart_ssh is changed
+    when: restart_ssh is changed and ( ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu' )
+    tags:
+      - vanilla
+
+  - name: Restart SSH server.
+    service:
+      name: sshd
+      state: restarted
+    when: restart_ssh is changed and ansible_distribution == 'OpenBSD'
     tags:
       - vanilla
 
