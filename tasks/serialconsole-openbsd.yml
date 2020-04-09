@@ -1,7 +1,8 @@
 - name: Configure the boot process to use the serial port as a console.
   copy:
-    src: "set tty com0"
     dest: /etc/boot.conf
+    content: |
+      set tty com0
 
 - name: Change /etc/ttys to get a login prompt at a serial console.
   lineinfile:
