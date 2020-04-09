@@ -45,7 +45,8 @@ Running the role with the `vanilla` tag will only make minimal modifications to 
 - set timezone
 - no customization to motd, bashrc, etc.
 - does not disable Ubuntu swapfile
-
+- will not automatically grow partition after resizing VM disk
+- check tasks/main.yml and others to see what else is excluded
 
 ### After Installation from ISO
 - check networking, that the VM is reachable via SSH
