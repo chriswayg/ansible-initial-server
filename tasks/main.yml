@@ -15,15 +15,7 @@
       packages:
       - python-apt
       - sudo
-
-  - name: Ensure that sudo is installed.
-    openbsd_pkg:
-      name: "{{ packages }}"
-      state: present
-    vars:
-      packages:
-      - sudo
-
+      
   ### SUDOERS ###
   - name: Check if iserver_user exists.
     shell: id -u "{{ iserver_user }}" > /dev/null 2>&1
