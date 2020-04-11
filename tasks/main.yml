@@ -2,6 +2,7 @@
 # tasks file for ansible-initial-server
 ## TODO:
 ## - check that it works with a default Ubuntu 18.04 ISO server install (probably using 'su' is not needed)
+## - ADD script: OpenBSD - generate new SSH host keys on first boot to avoid duplicates in cloned VMs
 
 # For this block we use 'su' on first-run, because root cannot ssh into the server.
 - name: KICKSTART (Debian or Ubuntu)
@@ -199,7 +200,7 @@
     tags:
       - vanilla
 
-  - include_tasks: ssh-host-keygen.yml
+  - include_tasks: ssh-host-keygen-debian-ubuntu.yml
     when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
   ### CUSTOMIZE ###
