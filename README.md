@@ -1,31 +1,36 @@
 ansible-initial-server
 ======================
 
-Initial configuration of a freshly installed Debian or Ubuntu server to be used as a template in KVM.
+Initial configuration of a freshly installed Debian/Ubuntu or OpenBSD server to be used as a template in KVM.
 
 - use the latest tagged version which has been tested more thoroughly than 'master'
 
 Requirements
 ------------
 
-### Install from ISO
-Tested with a default install of Debian 10 net-install ISO
+### Install from ISO (or use packer-proxmox-templates)
+- this role is used by [packer-proxmox-templates](https://github.com/chriswayg/packer-proxmox-templates)
+
+Use with a default install of **Debian 10** net-install ISO
 - installed from debian-10.x.y-amd64-netinst.iso
+- an auto-install http/preseed.cfg can be used to speed-up the initial install
 
-Also tested with a default install of Ubuntu 18.04 server ISO
-- installed from ubuntu-18.04.3-server-amd64.iso (not live-server)
-
+Use with a default install of **Ubuntu 18.04** server ISO
+- installed from ubuntu-18.04.x-server-amd64.iso (not live-server!)
 - Software: Standard System Utilities and SSH Server (Standard and Server in Ubuntu)
 - Default user `deploy` (customizable)
 - Partitions: 1 primary ext4 root partition /dev/sda1 (no swap); Grub on MBR
 - an auto-install http/preseed.cfg can be used to speed-up the initial install
-- used by [packer-proxmox-templates](https://github.com/chriswayg/packer-proxmox-templates)
 
-### Configuration features
+Use with a default install of **OpenBSD 6.x** server ISO
+- installed from install6x.iso
+- installed with all file sets (or drop optional -comp* -game* -x*)
+
+### Configuration features - Debian/Ubuntu
 - qemu-guest-agent for Packer SSH and in Proxmox for shutdown and backups
 - haveged random number generator to speed up boot
 - passwordless sudo for default user 'deploy' (name can be changed)
-- SSH public key installed for default user with only key login
+- SSH public key installed for default user with only key login permitted
 - no login for root
 - display IP and SSH fingerprint before console login
 - serial console
@@ -33,6 +38,13 @@ Also tested with a default install of Ubuntu 18.04 server ISO
 - automatically grow partition after resizing VM disk
 - optional SSH warning banner
 - optional Verse of the Day displayed on motd
+
+### Configuration features - OpenBSD
+- passwordless doas for default user 'deploy' (name can be changed)
+- SSH public key installed for default user with only key login permitted
+- no login for root
+- serial console
+- optional SSH warning banner
 
 #### Vanilla
 Running the role with the `vanilla` tag will only make minimal modifications to the system after an initial ISO installation:
