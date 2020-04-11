@@ -28,7 +28,7 @@ iserver_repos:
   # - deb http://security.ubuntu.com/ubuntu bionic-security main restricted universe multiverse
   # - deb-src http://security.ubuntu.com/ubuntu bionic-security main restricted universe multiverse
 
-# packages we want on every server
+# packages we want on every Debian/Ubuntu server
 iserver_packages:
   - qemu-guest-agent  # needed by packer
   - haveged           # prevent vm boot delays
@@ -45,6 +45,7 @@ iserver_packages:
   # - pv
   # - screen
 
+# packages we want on every OpenBSD server
 iserver_obsd_packages:
   - colorls # used by .profile
   - nano    # set as default editor in .profile
@@ -70,6 +71,7 @@ iserver_nameservers: 1.1.1.1,1.0.0.1
 
 ### SSH ###
 iserver_ssh_port: 22
+# this picks up the dafault public key from the user
 iserver_sshkey: "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_rsa.pub') }}"
 iserver_ssh_banner: none # or /etc/ssh/issue.net
 
@@ -79,6 +81,7 @@ iserver_timezone: UTC
 iserver_user_profile: |
   # no-op
 
+# OpenBSD profiles
 iserver_obsd_root_profile: |
   PS1='\[\033[1;31m\][\u@\h:\w]#\[\033[0m\] '
   export PS1
