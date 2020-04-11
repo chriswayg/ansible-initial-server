@@ -8,6 +8,7 @@ galaxy_info:
     versions:
     - stretch
     - buster
+  - name: OpenBSD
 
   galaxy_tags: []
     # List tags for your role here, one per line. A tag is a keyword that describes
