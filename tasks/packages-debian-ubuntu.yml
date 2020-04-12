@@ -8,7 +8,7 @@
 
   # this requires python-apt.
   # at least two repos need to be defined. repos are added to sources.list.d/
-  - name: Add a set of specified repositories into sources list.
+  - name: Add a set of specified repositories into sources list directory.
     apt_repository:
       repo: "{{ item }}"
       state: present
@@ -16,9 +16,9 @@
     when: iserver_repos[0] != "undefined"
 
   # so that Ubuntu will not complain about missing sources.list
-  - name: Ensure that there is at least a sources.list file placeholder.
+  - name: Ensure that there is a sources.list file.
     copy:
-      content: "# Ansible managed # active repos are in /etc/apt/sources.list.d/*"
+      src: sources.list
       dest: /etc/apt/sources.list
       force: no
 
