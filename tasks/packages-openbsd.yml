@@ -2,6 +2,8 @@
   openbsd_pkg:
     name: '*'
     state: latest
+  tags:
+    - vanilla
 
 - name: Ensure that initial packages are installed.
   openbsd_pkg:
