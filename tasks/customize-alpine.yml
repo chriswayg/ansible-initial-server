@@ -1,0 +1,26 @@
+- name: Move the original /etc/motd to back it up (once).
+  command: mv /etc/motd /etc/motd.original
+  args:
+    creates: /etc/motd.original
+
+# This does not update the motd with a new os-release after initial creation.
+- name: Create the file which will show a welcome motd after login.
+  shell: source /etc/os-release && printf "\n $PRETTY_NAME ($VERSION_ID) Server\n\n" > /etc/motd
+  args:
+    creates: /etc/motd
+
+- name: Add a block of commands in the root user profile.
+  blockinfile:
+    path: "/root/.profile"
+    block: |
+      {{ iserver_alpine_root_profile }}
+    marker: "# {mark} ANSIBLE MANAGED BLOCK"
+    create: yes
+
+- name: Add a block of commands in the default user profile.
+  blockinfile:
+    path: "/home/{{ iserver_user }}/.profile"
+    block: |
+      {{ iserver_alpine_user_profile }}
+    marker: "# {mark} ANSIBLE MANAGED BLOCK"
+    create: yes

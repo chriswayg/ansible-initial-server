@@ -1,0 +1,9 @@
+#!/bin/sh
+# Ansible managed
+date  >>/var/log/growpart 2>&1
+growpart -N /dev/sda 2 >>/var/log/growpart 2>&1
+if [ $? -eq 0 ]; then
+    echo "* auto-growing and resizing /dev/sda2" >>/var/log/growpart 2>&1
+    growpart /dev/sda 2 >>/var/log/growpart 2>&1
+    resize2fs /dev/sda2 >>/var/log/growpart 2>&1
+fi

@@ -1,0 +1,9 @@
+- name: Copy script which will run when the network comes up to display IP before login.
+  template:
+    src: show-ip-address-alpine.j2
+    dest: /etc/network/if-up.d/show-ip-address
+    mode: a+x
+
+# - name: Set fixed IP.
+#   tags:
+#     - vanilla

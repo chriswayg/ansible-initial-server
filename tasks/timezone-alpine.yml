@@ -1,0 +1,28 @@
+
+- name: Insert time zone into /etc/timezone.
+  copy:
+    dest: /etc/timezone
+    content: |
+      "{{ iserver_timezone }}"
+  register: current_timezone
+  tags:
+    - vanilla
+
+# only execute this block if timezone has been changed
+- block:
+  - name: Ensure time zone data is installed.
+    apk:
+      name: tzdata
+      state: present
+
+  - name: Copy time zone data to local time.
+    command: cp "/usr/share/zoneinfo/{{ iserver_timezone }}" /etc/localtime
+
+  - name: Ensure time zone data is removed.
+    apk:
+      name: tzdata
+      state: absent
+# block end
+  when: current_timezone.changed
+  tags:
+    - vanilla

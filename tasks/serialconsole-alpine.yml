@@ -1,0 +1,22 @@
+- name: Change update-extlinux.conf to get a login prompt at a serial console.
+  replace:
+    path: /etc/update-extlinux.conf
+    regexp: '(^.*)quiet(.*)'
+    replace: '\1console=ttyS0,9600\2'
+  register: update_extlinux
+
+- name: Activate serial console via update-extlinux.
+  command: update-extlinux
+  when: update_extlinux is changed
+
+- name: Disable inittab ttys to prevent lots of tty messages to be logged to syslog.
+  replace:
+    path: /etc/inittab
+    regexp: '(^tty[0-9].*)'
+    replace: '#\1'
+
+- name: Apply inittab settings to get a login prompt at a serial console.
+  replace:
+    path: /etc/inittab
+    regexp: '^#?\s*(ttyS0::respawn:/sbin/getty -L ttyS0.*)'
+    replace: '\1'
