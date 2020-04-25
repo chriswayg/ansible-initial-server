@@ -28,7 +28,14 @@ iserver_repos:
   # - deb http://security.ubuntu.com/ubuntu bionic-security main restricted universe multiverse
   # - deb-src http://security.ubuntu.com/ubuntu bionic-security main restricted universe multiverse
 
-# packages we want on every Debian/Ubuntu server
+  ## Alpine 3.11 example
+  # - http://nl.alpinelinux.org/alpine/v3.11/main
+  # - http://nl.alpinelinux.org/alpine/v3.11/community
+  # - @edge http://nl.alpinelinux.org/alpine/edge/main
+  # - @testing http://nl.alpinelinux.org/alpine/edge/testing
+  # - @edgecommunity http://dl-cdn.alpinelinux.org/alpine/edge/community
+
+# packages to install on every Debian/Ubuntu server
 iserver_packages:
   - qemu-guest-agent  # needed by packer
   - haveged           # prevent vm boot delays
@@ -45,12 +52,19 @@ iserver_packages:
   # - pv
   # - screen
 
-# packages we want on every OpenBSD server
+# packages to install on every OpenBSD server
 iserver_obsd_packages:
   - colorls # used by .profile
   - nano    # set as default editor in .profile
   - pstree
   - wget
+
+# packages to install on every Alpine server
+iserver_alpine_packages:
+  - qemu-guest-agent@edgecommunity # needed by packer
+  - nano    # set as default editor in .profile
+  - wget
+  - curl
 
 ### NETWORKING ###
 iserver_hostname: iserver-kvm
@@ -99,6 +113,21 @@ iserver_obsd_user_profile: |
   alias ls='colorls -G'
   EDITOR=/usr/local/bin/nano
   export EDITOR
+
+# Alpine profiles
+iserver_alpine_root_profile: |
+  export PS1="\[\033[1;31m\][\u@\h:\w]#\[\033[0m\] "
+  export LS_OPTIONS='--color=auto'
+  eval "`dircolors`"
+  alias ls='ls $LS_OPTIONS'
+  export EDITOR=/usr/bin/nano
+
+iserver_alpine_user_profile: |
+  export PS1="\[\033[1;34m\][\u@\h:\w]$\[\033[0m\] "
+  export LS_OPTIONS='--color=auto'
+  eval "`dircolors`"
+  alias ls='ls $LS_OPTIONS'
+  export EDITOR=/usr/bin/nano
 
 # iserver_bashrc block added to:
 iserver_users_dirs:
