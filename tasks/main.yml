@@ -5,7 +5,7 @@
 ## - ADD script: OpenBSD - generate new SSH host keys on first boot to avoid duplicates in cloned VMs
 
 # For this block we use 'su' on first-run, because root cannot ssh into the server.
-- name: KICKSTART (Debian or Ubuntu)
+- name: KICKSTART - Debian, Ubuntu.
   block:
   - name: Ensure that python-apt and sudo is installed.
     apt:
@@ -15,7 +15,7 @@
       packages:
       - python-apt
       - sudo
-      
+
   ### SUDOERS ###
   - name: Check if iserver_user exists.
     shell: id -u "{{ iserver_user }}" > /dev/null 2>&1
@@ -37,7 +37,7 @@
   tags:
     - vanilla
 
-- name: KICKSTART (OpenBSD)
+- name: KICKSTART - OpenBSD.
   block:
   ### SUDOERS ###
   - name: Check if iserver_user exists.
@@ -52,11 +52,54 @@
       dest: /etc/doas.conf
       mode: 0440
     when: user_exists is succeeded
-
   ## End of block KICKSTART
   become: true
   become_method: doas
   when: ansible_distribution == 'OpenBSD'
+  tags:
+    - vanilla
+
+# Assumes: Alpine SSH login with password for root allowed
+- name: KICKSTART - Alpine.
+  block:
+  - name: Ensure that sudo & shadow is installed.
+    apk:
+      name: "{{ packages }}"
+      state: present
+    vars:
+      packages:
+      - sudo
+      - shadow
+
+  ### SUDOERS ###
+  - name: Check if iserver_user exists.
+    shell: id -u "{{ iserver_user }}" > /dev/null 2>&1
+    ignore_errors: True
+    changed_when: false
+    register: user_exists
+
+  - name: Ensure group "{{ iserver_user }}" exists
+    group:
+      name: "{{ iserver_user }}"
+      state: present
+    when: user_exists is not succeeded
+
+  - name: Ensure that the default user "{{ iserver_user }}" exists
+    user:
+      name: "{{ iserver_user }}"
+      group: "{{ iserver_user }}"
+    when: user_exists is not succeeded
+
+  - name: Add the default user with passwordless sudo to sodoers.d
+    template:
+      src: default-user.j2
+      dest: /etc/sudoers.d/default-user
+      mode: 0440
+
+  ## End of block KICKSTART
+  become: true
+  become_method: "{{ iserver_become }}"
+  when: ansible_distribution == 'Alpine'
   tags:
     - vanilla
 
@@ -69,13 +112,21 @@
       - vanilla
 
   ### BASE PACKAGES ###
-  - include_tasks: packages-debian-ubuntu.yml
+  - name: Base Packages - Debian, Ubuntu
+    include_tasks: packages-debian-ubuntu.yml
     when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
     tags:
       - vanilla
 
-  - include_tasks: packages-openbsd.yml
+  - name: Base Packages - OpenBSD
+    include_tasks: packages-openbsd.yml
     when: ansible_distribution == 'OpenBSD'
+    tags:
+      - vanilla
+
+  - name: Base Packages - Alpine
+    include_tasks: packages-alpine.yml
+    when: ansible_distribution == 'Alpine'
     tags:
       - vanilla
 
@@ -99,18 +150,27 @@
     tags:
       - vanilla
 
-  - include_tasks: networking-debian.yml
+  - name: Networking - Debian
+    include_tasks: networking-debian.yml
     when: ansible_distribution == 'Debian'
     tags:
       - vanilla
 
-  - include_tasks: networking-ubuntu.yml
+  - name: Networking - Ubuntu
+    include_tasks: networking-ubuntu.yml
     when: ansible_distribution == 'Ubuntu'
     tags:
       - vanilla
 
-  - include_tasks: networking-openbsd.yml
+  - name: Networking - OpenBSD
+    include_tasks: networking-openbsd.yml
     when: ansible_distribution == 'OpenBSD'
+    tags:
+      - vanilla
+
+  - name: Networking - Alpine
+    include_tasks: networking-alpine.yml
+    when: ansible_distribution == 'Alpine'
     tags:
       - vanilla
 
@@ -129,7 +189,7 @@
     tags:
       - vanilla
 
-  - name: Apply network configuration changes (Debian/Ubuntu).
+  - name: Apply network configuration changes - Debian, Ubuntu.
     service:
       name: systemd-logind
       state: restarted
@@ -137,7 +197,7 @@
     tags:
       - vanilla
 
-  - name: Apply network configuration changes (OpenBSD).
+  - name: Apply network configuration changes - OpenBSD.
     command: sh /etc/netstart
     when: apply_network_config is changed and ansible_distribution == 'OpenBSD'
     tags:
@@ -176,7 +236,7 @@
       dest: "{{ iserver_ssh_banner }}"
     when: iserver_ssh_banner != "none"
 
-  - name: Restart SSH server.
+  - name: Restart SSH server  - Debian, Ubuntu.
     service:
       name: ssh
       state: restarted
@@ -184,51 +244,87 @@
     tags:
       - vanilla
 
-  - name: Restart SSH server.
+  - name: Restart SSH server - OpenBSD, Alpine.
     service:
       name: sshd
       state: restarted
-    when: restart_ssh is changed and ansible_distribution == 'OpenBSD'
+    when: restart_ssh is changed and ( ansible_distribution == 'OpenBSD' or ansible_distribution == 'Alpine' )
     tags:
       - vanilla
 
-  - include_tasks: ssh-host-keygen-debian-ubuntu.yml
+  - name: New SSH host keys on first boot - Debian, Ubuntu
+    include_tasks: ssh-host-keygen-debian-ubuntu.yml
     when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+  - name: New SSH host keys on first boot - Alpine
+    include_tasks: ssh-host-keygen-alpine.yml
+    when: ansible_distribution == 'Alpine'
 
   ### CUSTOMIZE ###
-  - name: Set timezone.
-    timezone:
-      name: "{{ iserver_timezone }}"
+  - name: Timezone - Debian, Ubuntu
+    include_tasks: timezone-most-distros.yml
+    when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu' or ansible_distribution == 'OpenBSD'
     tags:
       - vanilla
 
-  - include_tasks: customize-debian-ubuntu.yml
+  - name: Timezone - Alpine
+    include_tasks: timezone-alpine.yml
+    when: ansible_distribution == 'Alpine'
+    tags:
+      - vanilla
+
+  - name: Customize - Debian, Ubuntu
+    include_tasks: customize-debian-ubuntu.yml
     when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
-  - include_tasks: customize-openbsd.yml
+  - name: Customize - OpenBSD
+    include_tasks: customize-openbsd.yml
     when: ansible_distribution == 'OpenBSD'
+
+  - name: Customize - Alpine
+    include_tasks: customize-alpine.yml
+    when: ansible_distribution == 'Alpine'
 
   ### CLOUD ###
-  - include_tasks: serialconsole-debian-ubuntu.yml
+  - name: Serial Console - Debian, Ubuntu
+    include_tasks: serialconsole-debian-ubuntu.yml
     when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
     tags:
       - vanilla
 
-  - include_tasks: serialconsole-openbsd.yml
+  - name: Serial Console - OpenBSD
+    include_tasks: serialconsole-openbsd.yml
     when: ansible_distribution == 'OpenBSD'
     tags:
       - vanilla
 
-  - include_tasks: swapfile-ubuntu.yml
+  - name: Serial Console - Alpine
+    include_tasks: serialconsole-alpine.yml
+    when: ansible_distribution == 'Alpine'
+    tags:
+      - vanilla
+
+  - name: Remove Swapfile - Ubuntu
+    include_tasks: swapfile-ubuntu.yml
     when: ansible_distribution == 'Ubuntu'
 
   # GROW PARTITION
-  - include_tasks: growpartition-debian-ubuntu.yml
+  - name: Grow Partion Automatically - Debian, Ubuntu
+    include_tasks: growpartition-debian-ubuntu.yml
     when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
+  - name: Grow Partion Automatically - Alpine
+    include_tasks: growpartition-alpine.yml
+    when: ansible_distribution == 'Alpine'
+
   ### CLEANUP ###
-  - include_tasks: cleanup-debian-ubuntu.yml
+  - name: Cleanup - Debian, Ubuntu
+    include_tasks: cleanup-debian-ubuntu.yml
     when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+  - name: Cleanup - Alpine
+    include_tasks: cleanup-alpine.yml
+    when: ansible_distribution == 'Alpine'
 
   # or use '*'
   - name: Prevent password authentication for root.
