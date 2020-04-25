@@ -26,6 +26,10 @@ Use with a default install of **OpenBSD 6.x** server ISO
 - installed from install6x.iso
 - installed with all file sets (or drop optional -comp* -game* -x*)
 
+Use with a default install of **Alpine 3.x** server ISO
+-
+
+
 ### Configuration features - Debian/Ubuntu
 - qemu-guest-agent for Packer SSH and in Proxmox for shutdown and backups
 - haveged random number generator to speed up boot
@@ -99,23 +103,23 @@ Name of playbook: `server-template.yml`
 
 The Debian installer by default creates a root user with a root password, who is not permitted to SSH in to the server. Sudo is not installed by default. Therefore the default user can SSH into Debian, but has to use `su` to do roots tasks. There is no need to change `sshd_config` to `PermitRootLogin yes`, because this Ansible role can authenticate with the initial user password and then 'become' root using 'su'.
 
-Only for the first run on Debian (before sudo is active & the SSH key has been transferred):
+For the first run on Debian (before sudo is active & the SSH key has been transferred):
 
 - `ansible-playbook --ask-pass --ask-become-pass -e iserver_become=su  -v server-template.yml`
-
-
-For subsequent runs or on installations which have sudo and SSH-key already enabled:
-
-- `ansible-playbook --v server-template.yml`
 
 
 For the first run on Ubuntu (before the SSH key has been transferred):
 
 - `ansible-playbook --ask-pass --ask-become-pass -v server-template.yml`
 
-For subsequent runs:
 
-- `ansible-playbook -vv server-template.yml`
+For the first run on Alpine (as root before the SSH key has been transferred):
+
+- `ansible-playbook --ask-pass -v server-template.yml`
+
+For subsequent runs or on installations which have sudo and SSH-key already enabled:
+
+- `ansible-playbook -v server-template.yml`
 
 
 License
