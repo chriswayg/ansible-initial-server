@@ -2,14 +2,14 @@
 - name: Copy the cleanup script.
   template:
     src: template-cleanup-alpine.sh.j2
-    dest: /tmp/template-cleanup.sh
+    dest: /usr/local/bin/template-cleanup.sh
     mode: a+x
   when: iserver_is_template
   tags:
     - vanilla
 
 - name: Run the cleanup script for VM templates (only once).
-  shell: /tmp/template-cleanup.sh
+  shell: /usr/local/bin/template-cleanup.sh
   args:
     creates: /etc/.template-cleanup.done
   when: iserver_is_template

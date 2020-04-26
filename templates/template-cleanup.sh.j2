@@ -1,6 +1,8 @@
 #!/bin/bash
 # {{ ansible_managed }}
 
+[[ -f /etc/.template-cleanup.done ]] && exit 0
+
 export DEBIAN_FRONTEND=noninteractive
 
 echo "==> removing X11 packages (server not desktop...)"
