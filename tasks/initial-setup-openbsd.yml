@@ -82,7 +82,7 @@
       - vanilla
 
   ### SSH ###
-  - name: Ensure, that the default user has an SHH authorized key.
+  - name: Ensure, that the default user has an SSH authorized key.
     authorized_key:
       user: "{{ iserver_user }}"
       state: present
