@@ -62,33 +62,22 @@
 # Assumes: Alpine SSH login with password for root allowed
 - name: KICKSTART - Alpine.
   block:
-  - name: Ensure that sudo & shadow is installed.
+  - name: Ensure that sudo is installed.
     apk:
-      name: "{{ packages }}"
+      name: sudo
       state: present
-    vars:
-      packages:
-      - sudo
-      - shadow
 
   ### SUDOERS ###
-  - name: Check if iserver_user exists.
-    shell: id -u "{{ iserver_user }}" > /dev/null 2>&1
-    ignore_errors: True
-    changed_when: false
-    register: user_exists
-
   - name: Ensure group "{{ iserver_user }}" exists
     group:
       name: "{{ iserver_user }}"
       state: present
-    when: user_exists is not succeeded
 
   - name: Ensure that the default user "{{ iserver_user }}" exists
     user:
       name: "{{ iserver_user }}"
       group: "{{ iserver_user }}"
-    when: user_exists is not succeeded
+      password: '*'
 
   - name: Add the default user with passwordless sudo to sodoers.d
     template:
@@ -209,7 +198,6 @@
       user: "{{ iserver_user }}"
       state: present
       key: "{{ iserver_sshkey }}"
-    when: user_exists is succeeded
     tags:
       - vanilla
 
