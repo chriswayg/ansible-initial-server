@@ -1,0 +1,169 @@
+# Initial Setup - Alpine.
+
+# Assumes that: Alpine SSH login with password for root allowed
+- name: KICKSTART - Alpine.
+  block:
+  - name: Ensure that sudo is installed.
+    apk:
+      name: sudo
+      state: present
+
+  ### SUDOERS ###
+  - name: Ensure group "{{ iserver_user }}" exists
+    group:
+      name: "{{ iserver_user }}"
+      state: present
+
+  - name: Ensure that the default user "{{ iserver_user }}" exists
+    user:
+      name: "{{ iserver_user }}"
+      group: "{{ iserver_user }}"
+      password: '*'
+
+  - name: Add the default user with passwordless sudo to sodoers.d
+    template:
+      src: default-user.j2
+      dest: /etc/sudoers.d/default-user
+      mode: 0440
+
+  ## End of block KICKSTART
+  become: true
+  become_method: "{{ iserver_become }}"
+  tags:
+    - vanilla
+
+## Now that the default user can do passwordless sudo, run the rest with sudo.
+- name: MAIN
+  block:
+  - name: Reset SSH connection to allow user changes to affect 'current login user'.
+    meta: reset_connection
+    tags:
+      - vanilla
+
+  ### BASE PACKAGES ###
+  - name: Base Packages.
+    include_tasks: packages-alpine.yml
+    tags:
+      - vanilla
+
+  ### NETWORKING ###
+  - name: Create a blank /etc/issue, if it does not exist.
+    file:
+      path: /etc/issue
+      state: touch
+      modification_time: preserve
+      access_time: preserve
+
+  - name: Copy original /etc/issue (once).
+    command: cp /etc/issue /etc/issue.original
+    args:
+      creates: /etc/issue.original
+
+  - name: Set hostname.
+    hostname:
+      name: "{{ iserver_hostname }}"
+    register: apply_network_config
+    tags:
+      - vanilla
+
+  - name: Networking.
+    include_tasks: networking-alpine.yml
+    tags:
+      - vanilla
+
+  - name: Copy original hosts file to back it up (once).
+    command: cp /etc/hosts /etc/hosts.original
+    args:
+      creates: /etc/hosts.original
+    tags:
+      - vanilla
+
+  - name: Create new hosts file.
+    template:
+      src: hosts.j2
+      dest: /etc/hosts
+    register: apply_network_config
+    tags:
+      - vanilla
+
+  - name: Apply network configuration changes.
+    command: /etc/init.d/networking restart
+    when: apply_network_config is changed
+    tags:
+      - vanilla
+
+  ### SSH ###
+  - name: Ensure, that the default user has an SHH authorized key.
+    authorized_key:
+      user: "{{ iserver_user }}"
+      state: present
+      key: "{{ iserver_sshkey }}"
+    tags:
+      - vanilla
+
+  #'UseDNS no' avoids login delays when the remote client's DNS cannot be resolved
+  - name: Disallow root SSH access, only allow SSH key login; UseDNS no.
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      state: present
+      regexp: "{{ item.regexp }}"
+      line: "{{ item.line }}"
+    loop:
+      - { regexp: '^PermitRootLogin', line: 'PermitRootLogin no' }
+      - { regexp: '^PasswordAuthentication', line: 'PasswordAuthentication no' }
+      - { regexp: '^UseDNS', line: 'UseDNS no' }
+      - { regexp: '^Banner', line: 'Banner {{ iserver_ssh_banner }}' }
+      - { regexp: '^Port', line: 'Port {{ iserver_ssh_port }}' }
+    register: restart_ssh
+    tags:
+      - vanilla
+
+  - name: Add a warning banner, shown before SSH login.
+    copy:
+      src: issue.net
+      dest: "{{ iserver_ssh_banner }}"
+    when: iserver_ssh_banner != "none"
+
+  - name: Restart SSH server.
+    service:
+      name: sshd
+      state: restarted
+    when: restart_ssh is changed
+    tags:
+      - vanilla
+
+  - name: New SSH host keys on first boot - Alpine
+    include_tasks: ssh-host-keygen-alpine.yml
+
+  ### CUSTOMIZE ###
+  - name: Timezone.
+    include_tasks: timezone-alpine.yml
+    tags:
+      - vanilla
+
+  - name: Customize.
+    include_tasks: customize-alpine.yml
+
+  ### CLOUD ###
+  - name: Serial Console.
+    include_tasks: serialconsole-alpine.yml
+    tags:
+      - vanilla
+
+  # GROW PARTITION
+  - name: Grow Partion Automatically.
+    include_tasks: growpartition-alpine.yml
+
+  ### CLEANUP ###
+  - name: Cleanup.
+    include_tasks: cleanup-alpine.yml
+
+  # or use '*'
+  - name: Prevent password authentication for root.
+    user:
+      name: root
+      password: '!'
+    tags:
+      - vanilla
+  ## End of block MAIN
+  become: true

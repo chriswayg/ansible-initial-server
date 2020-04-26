@@ -1,0 +1,160 @@
+# Initial Setup - OpenBSD.
+
+- name: KICKSTART - OpenBSD.
+  block:
+  ### SUDOERS ###
+  - name: Check if iserver_user exists.
+    shell: id -u "{{ iserver_user }}" > /dev/null 2>&1
+    ignore_errors: True
+    changed_when: false
+    register: user_exists
+
+  - name: Add the default user with passwordless doas.
+    template:
+      src: doas.conf.j2
+      dest: /etc/doas.conf
+      mode: 0440
+    when: user_exists is succeeded
+  ## End of block KICKSTART
+  become: true
+  become_method: doas
+  tags:
+    - vanilla
+
+## Now that the default user can do passwordless sudo, run the rest with sudo.
+- name: MAIN
+  block:
+  - name: Reset SSH connection to allow user changes to affect 'current login user'.
+    meta: reset_connection
+    tags:
+      - vanilla
+
+  ### BASE PACKAGES ###
+  - name: Base Packages - OpenBSD
+    include_tasks: packages-openbsd.yml
+    tags:
+      - vanilla
+
+  ### NETWORKING ###
+  - name: Create a blank /etc/issue, if it does not exist.
+    file:
+      path: /etc/issue
+      state: touch
+      modification_time: preserve
+      access_time: preserve
+
+  - name: Copy original /etc/issue (once).
+    command: cp /etc/issue /etc/issue.original
+    args:
+      creates: /etc/issue.original
+
+  - name: Set hostname.
+    hostname:
+      name: "{{ iserver_hostname }}"
+    register: apply_network_config
+    tags:
+      - vanilla
+
+  - name: Networking.
+    include_tasks: networking-openbsd.yml
+    tags:
+      - vanilla
+
+  - name: Copy original hosts file to back it up (once).
+    command: cp /etc/hosts /etc/hosts.original
+    args:
+      creates: /etc/hosts.original
+    tags:
+      - vanilla
+
+  - name: Create new hosts file.
+    template:
+      src: hosts.j2
+      dest: /etc/hosts
+    register: apply_network_config
+    tags:
+      - vanilla
+
+  - name: Apply network configuration changes.
+    command: sh /etc/netstart
+    when: apply_network_config is changed
+    tags:
+      - vanilla
+
+  ### SSH ###
+  - name: Ensure, that the default user has an SHH authorized key.
+    authorized_key:
+      user: "{{ iserver_user }}"
+      state: present
+      key: "{{ iserver_sshkey }}"
+    tags:
+      - vanilla
+
+  #'UseDNS no' avoids login delays when the remote client's DNS cannot be resolved
+  - name: Disallow root SSH access, only allow SSH key login; UseDNS no.
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      state: present
+      regexp: "{{ item.regexp }}"
+      line: "{{ item.line }}"
+    loop:
+      - { regexp: '^PermitRootLogin', line: 'PermitRootLogin no' }
+      - { regexp: '^PasswordAuthentication', line: 'PasswordAuthentication no' }
+      - { regexp: '^UseDNS', line: 'UseDNS no' }
+      - { regexp: '^Banner', line: 'Banner {{ iserver_ssh_banner }}' }
+      - { regexp: '^Port', line: 'Port {{ iserver_ssh_port }}' }
+    register: restart_ssh
+    tags:
+      - vanilla
+
+  - name: Add a warning banner, shown before SSH login.
+    copy:
+      src: issue.net
+      dest: "{{ iserver_ssh_banner }}"
+    when: iserver_ssh_banner != "none"
+
+  - name: Restart SSH server.
+    service:
+      name: sshd
+      state: restarted
+    when: restart_ssh is changed
+    tags:
+      - vanilla
+
+  # TODO
+  # - name: New SSH host keys on first boot.
+  #   include_tasks: ssh-host-keygen-openbsd.yml
+
+  ### CUSTOMIZE ###
+  - name: Timezone.
+    include_tasks: timezone-most-distros.yml
+    tags:
+      - vanilla
+
+  - name: Customize.
+    include_tasks: customize-openbsd.yml
+
+  ### CLOUD ###
+  - name: Serial Console.
+    include_tasks: serialconsole-openbsd.yml
+    tags:
+      - vanilla
+
+  # TODO GROW PARTITION
+  # - name: Grow Partition Automatically.
+  #   include_tasks: growpartition-openbsd.yml
+
+  ### CLEANUP ###
+  # TODO
+  # - name: Cleanup.
+  #   include_tasks: cleanup-openbsd.yml
+
+  # or use '*'
+  - name: Prevent password authentication for root.
+    user:
+      name: root
+      password: '!'
+    tags:
+      - vanilla
+  ## End of block MAIN
+  become: true
