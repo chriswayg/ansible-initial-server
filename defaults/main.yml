@@ -62,7 +62,8 @@ iserver_obsd_packages:
 # packages to install on every Alpine server
 iserver_alpine_packages:
   - qemu-guest-agent@edgecommunity # needed by packer
-  - shadow
+  - sudo    # required
+  - shadow  # required for adduser with Ansible
   - nano    # set as default editor in .profile
   - wget
   - curl
