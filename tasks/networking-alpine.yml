@@ -6,7 +6,11 @@
     dest: /etc/network/if-up.d/show-ip-address
     mode: a+x
 
-# TODO
-# - name: Set fixed IP.
-#   tags:
-#     - vanilla
+# TODO test this
+- name: Set fixed IP via network/interfaces.
+  template:
+    src: interfaces.j2
+    dest: /etc/network/interfaces
+  when: set_fixed_IP
+  tags:
+    - vanilla
