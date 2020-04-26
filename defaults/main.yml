@@ -29,11 +29,11 @@ iserver_repos:
   # - deb-src http://security.ubuntu.com/ubuntu bionic-security main restricted universe multiverse
 
   ## Alpine 3.11 example
-  # - http://nl.alpinelinux.org/alpine/v3.11/main
-  # - http://nl.alpinelinux.org/alpine/v3.11/community
-  # - @edge http://nl.alpinelinux.org/alpine/edge/main
-  # - @testing http://nl.alpinelinux.org/alpine/edge/testing
-  # - @edgecommunity http://dl-cdn.alpinelinux.org/alpine/edge/community
+  # - 'http://nl.alpinelinux.org/alpine/v3.11/main'
+  # - 'http://nl.alpinelinux.org/alpine/v3.11/community'
+  # - '@edge http://nl.alpinelinux.org/alpine/edge/main'
+  # - '@testing http://nl.alpinelinux.org/alpine/edge/testing'
+  # - '@edgecommunity http://dl-cdn.alpinelinux.org/alpine/edge/community'
 
 # packages to install on every Debian/Ubuntu server
 iserver_packages:
