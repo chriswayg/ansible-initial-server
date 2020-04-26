@@ -3,10 +3,11 @@
 # Assumes that: Alpine SSH login with password for root allowed
 - name: KICKSTART - Alpine.
   block:
-  - name: Ensure that sudo is installed.
-    apk:
-      name: sudo
-      state: present
+  ### BASE PACKAGES ###
+  - name: Base Packages.
+    include_tasks: packages-alpine.yml
+    tags:
+      - vanilla
 
   ### SUDOERS ###
   - name: Ensure group "{{ iserver_user }}" exists
@@ -37,12 +38,6 @@
   block:
   - name: Reset SSH connection to allow user changes to affect 'current login user'.
     meta: reset_connection
-    tags:
-      - vanilla
-
-  ### BASE PACKAGES ###
-  - name: Base Packages.
-    include_tasks: packages-alpine.yml
     tags:
       - vanilla
 
@@ -93,7 +88,7 @@
       - vanilla
 
   ### SSH ###
-  - name: Ensure, that the default user has an SHH authorized key.
+  - name: Ensure, that the default user has a SSH authorized key.
     authorized_key:
       user: "{{ iserver_user }}"
       state: present
@@ -102,18 +97,24 @@
       - vanilla
 
   #'UseDNS no' avoids login delays when the remote client's DNS cannot be resolved
-  - name: Disallow root SSH access, only allow SSH key login; UseDNS no.
+  - name: Disallow root SSH access, only allow SSH key login.
     lineinfile:
       path: /etc/ssh/sshd_config
       state: present
       regexp: "{{ item.regexp }}"
       line: "{{ item.line }}"
-    loop:
-      - { regexp: '^PermitRootLogin', line: 'PermitRootLogin no' }
-      - { regexp: '^PasswordAuthentication', line: 'PasswordAuthentication no' }
-      - { regexp: '^UseDNS', line: 'UseDNS no' }
-      - { regexp: '^Banner', line: 'Banner {{ iserver_ssh_banner }}' }
-      - { regexp: '^Port', line: 'Port {{ iserver_ssh_port }}' }
+      validate: '/usr/sbin/sshd -t -f %s'
+    with_items:
+    - regexp: '^PermitRootLogin'
+      line:   'PermitRootLogin no'
+    - regexp: '^PasswordAuthentication'
+      line:   'PasswordAuthentication no'
+    - regexp: '^UseDNS'
+      line:   'UseDNS no'
+    - regexp: '^Banner'
+      line:   'Banner {{ iserver_ssh_banner }}'
+    - regexp: '^Port'
+      line:   'Port {{ iserver_ssh_port }}'
     register: restart_ssh
     tags:
       - vanilla
@@ -132,7 +133,7 @@
     tags:
       - vanilla
 
-  - name: New SSH host keys on first boot - Alpine
+  - name: New SSH host keys on first boot.
     include_tasks: ssh-host-keygen-alpine.yml
 
   ### CUSTOMIZE ###
