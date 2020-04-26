@@ -4,6 +4,7 @@
     dest: /etc/network/if-up.d/show-ip-address
     mode: a+x
 
+# TODO
 # - name: Set fixed IP.
 #   tags:
 #     - vanilla
