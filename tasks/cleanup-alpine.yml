@@ -1,4 +1,5 @@
 ### CLEANUP ###
+
 - name: Copy the cleanup script.
   template:
     src: template-cleanup-alpine.sh.j2

@@ -1,3 +1,5 @@
+# SERIAL CONSOLE
+
 - name: Enable the serial console by modifying grub.
   lineinfile:
     path: /etc/default/grub

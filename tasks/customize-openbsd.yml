@@ -1,3 +1,5 @@
+### CUSTOMIZE ###
+
 - name: Copy the original /etc/motd to back it up (once).
   command: cp /etc/motd /etc/motd.original
   args:

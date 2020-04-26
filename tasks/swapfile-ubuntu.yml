@@ -1,12 +1,12 @@
 # DISABLE SWAPFILE
-# Ubuntu 'server' uses /swapfile
-# Ubuntu 'live-server' uses /swap.img
 
+# Ubuntu 'server' uses /swapfile
 - name: Disable swap if /swapfile exists.
   command: swapoff -a
   args:
     removes: /swapfile
 
+# Ubuntu 'live-server' uses /swap.img
 - name: Disable swap if /swap.img exists.
   command: swapoff -a
   args:

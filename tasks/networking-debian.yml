@@ -1,3 +1,5 @@
+### NETWORKING ###
+
 # Note: run-parts doesn't run scripts with a .sh extension
 - name: Copy Debian script which will run when the network comes up to display IP before login.
   template:

@@ -1,4 +1,5 @@
 # SSH-HOST-KEYGEN (for KVM template)
+
 - name: Copy script for OpenSSH Server Key Generation.
   copy:
     src: ssh-host-keygen.sh

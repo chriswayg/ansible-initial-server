@@ -1,3 +1,5 @@
+### NETWORKING ###
+
 - name: Copy Ubuntu script which will run when the network comes up to display IP before login.
   copy:
     src: 99-show-ip-address

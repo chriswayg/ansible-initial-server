@@ -1,3 +1,5 @@
+# SERIAL CONSOLE
+
 - name: Configure the boot process to use the serial port as a console.
   copy:
     dest: /etc/boot.conf
