@@ -1,5 +1,6 @@
 ---
-- hosts: localhost
-  remote_user: root
+# tests run by travis
+- hosts: all
+
   roles:
-    - ansible-initial-server
+    - role: role_under_test
