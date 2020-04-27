@@ -1,10 +1,5 @@
 ### BASE PACKAGES ###
 
-- name: Ensure that python-apt is installed.
-  apt:
-    name: python-apt
-    state: present
-
 # replaces sources.list repos.
 - name: Move original /etc/apt/sources.list to back it up (once).
   command: mv /etc/apt/sources.list /etc/apt/sources.list.original
