@@ -91,6 +91,12 @@
   #     - vanilla
 
   ### SSH ###
+  - name: Ensure that sshd is enabled and started.
+    service:
+      name: sshd
+      enabled: yes
+      state: started
+
   - name: Ensure, that the default user has a SSH authorized key.
     authorized_key:
       user: "{{ iserver_user }}"
