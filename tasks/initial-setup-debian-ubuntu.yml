@@ -28,7 +28,6 @@
       src: default-user.j2
       dest: /etc/sudoers.d/default-user
       mode: 0440
-    when: user_exists is succeeded
 
   ## End of block KICKSTART
   become: true
