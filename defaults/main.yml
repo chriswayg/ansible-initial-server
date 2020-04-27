@@ -66,6 +66,7 @@ iserver_obsd_packages:
 
 # packages to install on every Alpine server
 iserver_alpine_packages:
+  - openssh # needed for Travis testing
   - qemu-guest-agent@edgecommunity # needed by packer
   - sudo    # required
   - shadow  # required for adduser with Ansible
