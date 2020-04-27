@@ -6,8 +6,6 @@
     content: |
       "{{ iserver_timezone }}"
   register: current_timezone
-  tags:
-    - vanilla
 
 # only execute this block if timezone has been changed
 - block:
@@ -25,5 +23,3 @@
       state: absent
 # block end
   when: current_timezone.changed
-  tags:
-    - vanilla

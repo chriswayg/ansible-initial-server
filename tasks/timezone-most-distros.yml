@@ -3,5 +3,3 @@
 - name: Set timezone.
   timezone:
     name: "{{ iserver_timezone }}"
-  tags:
-    - vanilla
