@@ -18,14 +18,8 @@
     src: template-cleanup.sh.j2
     dest: /usr/local/bin/template-cleanup.sh
     mode: a+x
-  when: iserver_is_template
-  tags:
-    - vanilla
 
 - name: Run the cleanup script for VM templates (only once).
   shell: /usr/local/bin/template-cleanup.sh
   args:
     creates: /etc/.template-cleanup.done
-  when: iserver_is_template
-  tags:
-    - vanilla
