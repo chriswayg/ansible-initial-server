@@ -7,6 +7,6 @@ if [[ -f /etc/run-ssh-host-keygen-once ]]; then
     rm -v -f /etc/ssh/*key*
     ssh-keygen -A
     # ensure that /etc/issue gets updated with the new key
-    /etc/network/if-up.d/show-ip-address
+    /etc/network/if-up.d/show-ip-address update
     rm -v -f /etc/run-ssh-host-keygen-once
 fi
