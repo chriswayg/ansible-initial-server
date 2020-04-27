@@ -7,7 +7,7 @@
     creates: /etc/apt/sources.list.original
   when: iserver_repos[0] != "undefined"
 
-# this requires python-apt.
+# this requests python-apt with a warning.
 # at least two repos need to be defined. repos are added to sources.list.d/
 - name: Add a set of specified repositories into sources list directory.
   apt_repository:
@@ -33,5 +33,5 @@
 
 - name: Ensure that initial packages are installed.
   apt:
-    name: "{{ iserver_packages }}"
+    name: "{{ iserver_deb_packages }}"
     state: present
