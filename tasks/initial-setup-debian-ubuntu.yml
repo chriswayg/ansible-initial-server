@@ -82,13 +82,13 @@
     tags:
       - vanilla
 
-  - name: Create new hosts file.
-    template:
-      src: hosts.j2
-      dest: /etc/hosts
-    register: apply_network_config
-    tags:
-      - vanilla
+  # - name: Create new hosts file.
+  #   template:
+  #     src: hosts.j2
+  #     dest: /etc/hosts
+  #   register: apply_network_config
+  #   tags:
+  #     - vanilla
 
   - name: Apply network configuration changes.
     service:
