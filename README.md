@@ -72,10 +72,10 @@ Important Role Variables
 `iserver_user`
 - Username of the default user
 
-`iserver_repos`
+`iserver_[OS]_repos`
 - List of repositories which will replace the initial defaults
 
-`iserver_packages`
+`iserver_[OS]_packages`
 - List of system utilities to install
 
 `iserver_hostname` and `iserver_domain`

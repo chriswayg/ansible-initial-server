@@ -1,11 +1,10 @@
 ### BASE PACKAGES ###
 
-# replaces sources.list repos, if iserver_repos has repos defined.
+# replaces sources.list repos.
 - name: Move original /etc/apk/repositories to back it up (once).
   command: mv /etc/apk/repositories /etc/apk/repositories.original
   args:
     creates: /etc/apk/repositories.original
-  when: iserver_repos[0] != "undefined"
 
 - name: Add a set of specified repos into /etc/apk/repositories.
   lineinfile:
@@ -14,15 +13,12 @@
     create: yes
     regexp: "^{{ item }}"
     line: "{{ item }}"
-  loop: "{{ iserver_repos }}"
-  when: iserver_repos[0] != "undefined"
+  loop: "{{ iserver_alpine_repos }}"
 
 - name: Ensure, that all packages are updated and upgraded.
   apk:
     update_cache: yes
     upgrade: yes
-  tags:
-    - vanilla
 
 - name: Ensure that initial packages are installed.
   apk:

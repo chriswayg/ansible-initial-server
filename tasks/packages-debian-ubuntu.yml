@@ -1,20 +1,26 @@
 ### BASE PACKAGES ###
 
-# replaces sources.list repos, if iserver_repos has repos defined.
+# replaces sources.list repos.
 - name: Move original /etc/apt/sources.list to back it up (once).
   command: mv /etc/apt/sources.list /etc/apt/sources.list.original
   args:
     creates: /etc/apt/sources.list.original
-  when: iserver_repos[0] != "undefined"
 
-# this requests python-apt with a warning.
+# this expects python-apt to be installed.
 # at least two repos need to be defined. repos are added to sources.list.d/
 - name: Add a set of specified repositories into sources list directory.
   apt_repository:
     repo: "{{ item }}"
     state: present
-  loop: "{{ iserver_repos }}"
-  when: iserver_repos[0] != "undefined"
+  loop: "{{ iserver_debian_repos }}"
+  when: ansible_distribution == 'Debian'
+
+- name: Add a set of specified repositories into sources list directory.
+  apt_repository:
+    repo: "{{ item }}"
+    state: present
+  loop: "{{ iserver_ubuntu_repos }}"
+  when: ansible_distribution == 'Ubuntu'
 
 # so that Ubuntu will not complain about missing sources.list
 - name: Ensure that there is a sources.list file.
@@ -28,8 +34,6 @@
     upgrade: "yes"
     update_cache: yes
     cache_valid_time: 86400 #One day
-  tags:
-    - vanilla
 
 - name: Ensure that initial packages are installed.
   apt:
