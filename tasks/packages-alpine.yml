@@ -19,6 +19,8 @@
   apk:
     update_cache: yes
     # upgrade: yes
+    # just for fixing Travis errors
+    changed_when: False
 
 - name: Ensure that initial packages are installed.
   apk:
