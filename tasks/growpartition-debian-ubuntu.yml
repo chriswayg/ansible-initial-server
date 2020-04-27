@@ -1,4 +1,8 @@
 # GROW PARTITION
+- name: Ensure that cloud-guest-utils including growpart is installed.
+  apt:
+    name: cloud-guest-utils
+    state: present
 
 - name: Copy systemd unitfile to automatically Grow Partition after resize by Proxmox.
   copy:
