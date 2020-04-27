@@ -3,9 +3,10 @@
 # Assumes that: Alpine SSH login with password for root allowed
 - name: KICKSTART - Alpine.
   block:
-  ### BASE PACKAGES ###
-  - name: Base Packages.
-    import_tasks: packages-alpine.yml
+  - name: Ensure that sudo is installed.
+    apk:
+      name: sudo
+      state: present
 
   ### SUDOERS ###
   - name: Ensure group "{{ iserver_user }}" exists
@@ -38,6 +39,10 @@
     meta: reset_connection
     tags:
       - vanilla
+
+  ### BASE PACKAGES ###
+  - name: Base Packages.
+    import_tasks: packages-alpine.yml
 
   ### NETWORKING ###
   - name: Create a blank /etc/issue, if it does not exist.

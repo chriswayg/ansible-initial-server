@@ -2,10 +2,6 @@
 
 - name: KICKSTART - OpenBSD.
   block:
-  ### BASE PACKAGES ###
-  - name: Base Packages - OpenBSD
-    import_tasks: packages-openbsd.yml
-
   ### SUDOERS ###
   - name: Check if iserver_user exists.
     shell: id -u "{{ iserver_user }}" > /dev/null 2>&1
@@ -32,6 +28,10 @@
     meta: reset_connection
     tags:
       - vanilla
+
+  ### BASE PACKAGES ###
+  - name: Base Packages - OpenBSD
+    import_tasks: packages-openbsd.yml
 
   ### NETWORKING ###
   - name: Create a blank /etc/issue, if it does not exist.

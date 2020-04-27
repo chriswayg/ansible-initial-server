@@ -3,9 +3,14 @@
 # For this block we use 'su' on first-run, because root cannot ssh into the server.
 - name: KICKSTART - Debian, Ubuntu.
   block:
-  ### BASE PACKAGES ###
-  - name: Base Packages.
-    import_tasks: packages-debian-ubuntu.yml
+  - name: Ensure that python-apt and sudo is installed.
+    apt:
+      name: "{{ packages }}"
+      state: present
+    vars:
+      packages:
+      - python-apt
+      - sudo
 
   ### SUDOERS ###
   - name: Check if iserver_user exists.
@@ -34,6 +39,10 @@
     meta: reset_connection
     tags:
       - vanilla
+
+  ### BASE PACKAGES ###
+  - name: Base Packages.
+    import_tasks: packages-debian-ubuntu.yml
 
   ### NETWORKING ###
   - name: Create a blank /etc/issue, if it does not exist.
