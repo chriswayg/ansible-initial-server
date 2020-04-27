@@ -36,17 +36,16 @@ iserver_repos:
   # - '@edgecommunity http://dl-cdn.alpinelinux.org/alpine/edge/community'
 
 # packages to install on every Debian/Ubuntu server
-iserver_packages:
+iserver_deb_packages:
   - qemu-guest-agent # needed by packer
   - sudo
   - python-apt       # used by ansible
   - haveged          # prevent vm boot delays
+  - net-tools        # includes ifconfig, netstat
   - nano             # set as default editor in .profile
+  - psmisc           # includes pstree
   - wget
   - curl
-  - psmisc           # includes pstree
-  - net-tools        # includes ifconfig, netstat
-  # - verse           # used in motd (optional)
   # - lsof
   # - lshw
   # - ncdu
@@ -69,6 +68,7 @@ iserver_alpine_packages:
   - sudo    # required
   - shadow  # required for adduser with Ansible
   - nano    # set as default editor in .profile
+  - pstree
   - wget
   - curl
 
