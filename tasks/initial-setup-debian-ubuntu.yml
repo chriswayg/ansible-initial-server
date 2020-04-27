@@ -3,13 +3,12 @@
 # For this block we use 'su' on first-run, because root cannot ssh into the server.
 - name: KICKSTART - Debian, Ubuntu.
   block:
-  - name: Ensure that python-apt and sudo is installed.
+  - name: Ensure that sudo is installed.
     apt:
       name: "{{ packages }}"
       state: present
     vars:
       packages:
-      - python-apt
       - sudo
 
   ### SUDOERS ###
@@ -57,12 +56,12 @@
     args:
       creates: /etc/issue.original
 
-  - name: Set hostname.
-    hostname:
-      name: "{{ iserver_hostname }}"
-    register: apply_network_config
-    tags:
-      - vanilla
+  # - name: Set hostname.
+  #   hostname:
+  #     name: "{{ iserver_hostname }}"
+  #   register: apply_network_config
+  #   tags:
+  #     - vanilla
 
   - name: Networking - Debian.
     import_tasks: networking-debian.yml
