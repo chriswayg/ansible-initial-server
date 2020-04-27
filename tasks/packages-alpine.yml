@@ -18,10 +18,9 @@
 - name: Ensure, that all packages are updated and upgraded.
   apk:
     update_cache: yes
-    upgrade: yes
+    # upgrade: yes
 
 - name: Ensure that initial packages are installed.
   apk:
     name: "{{ iserver_alpine_packages }}"
     state: present
-  become_method: su
