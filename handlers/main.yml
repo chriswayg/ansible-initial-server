@@ -1,2 +1,11 @@
 ---
 # handlers file for ansible-initial-server
+
+# Ensure that local auto-start service is enabled on Alpine
+# Used to start ssh-host-keygen.sh on first boot and the auto-growpart script
+- name: Activate Autostart
+  service:
+    name: local
+    runlevel: default
+    enabled: yes
+  become: true

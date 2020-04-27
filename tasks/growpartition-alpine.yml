@@ -9,10 +9,11 @@
     - nettle@edge     # A low-level cryptographic library (prereq for cloud-utils)
     - gnutls@edge     # A TLS protocol implementation (prereq for cloud-utils)
     - cloud-utils@testing # Useful set of utilities for interacting with a cloud (growpart)
-    - e2fsprogs-extra # Ext2/3/4 filesystem extra utilities (resize2fs)
+    - e2fsprogs-extra     # Ext2/3/4 filesystem extra utilities (resize2fs)
 
 - name: Copy script to automatically Grow Partition after resize by Proxmox.
   copy:
     src: auto_grow_partition.start
     dest: /etc/local.d/05_auto_grow_partition.start
     mode: a+x
+  notify: Activate Autostart
