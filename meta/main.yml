@@ -2,13 +2,15 @@ galaxy_info:
   author: Christian Wagner
   description: Initial configuration of a freshly installed Debian server to be used as a template in KVM.
   license: MIT
-  min_ansible_version: 2.6
+  # Tested with Ansible 2.7 & 2.9
+  min_ansible_version: 2.7
   platforms:
   - name: Debian
     versions:
     - stretch
     - buster
   - name: OpenBSD
+  - name: Alpine
 
   galaxy_tags: []
     # List tags for your role here, one per line. A tag is a keyword that describes
