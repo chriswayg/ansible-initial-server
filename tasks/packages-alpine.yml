@@ -24,3 +24,4 @@
   apk:
     name: "{{ iserver_alpine_packages }}"
     state: present
+  become_method: su
