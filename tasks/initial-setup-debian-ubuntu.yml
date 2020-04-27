@@ -63,17 +63,17 @@
   #   tags:
   #     - vanilla
 
-  - name: Networking - Debian.
-    import_tasks: networking-debian.yml
-    when: ansible_distribution == 'Debian'
-    tags:
-      - vanilla
-
-  - name: Networking - Ubuntu.
-    import_tasks: networking-ubuntu.yml
-    when: ansible_distribution == 'Ubuntu'
-    tags:
-      - vanilla
+  # - name: Networking - Debian.
+  #   import_tasks: networking-debian.yml
+  #   when: ansible_distribution == 'Debian'
+  #   tags:
+  #     - vanilla
+  #
+  # - name: Networking - Ubuntu.
+  #   import_tasks: networking-ubuntu.yml
+  #   when: ansible_distribution == 'Ubuntu'
+  #   tags:
+  #     - vanilla
 
   - name: Copy original hosts file to back it up (once).
     command: cp /etc/hosts /etc/hosts.original
