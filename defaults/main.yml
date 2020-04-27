@@ -37,13 +37,16 @@ iserver_repos:
 
 # packages to install on every Debian/Ubuntu server
 iserver_packages:
-  - qemu-guest-agent  # needed by packer
-  - haveged           # prevent vm boot delays
-  - cloud-guest-utils # used by growpart
-  - verse             # used in motd (optional)
+  - qemu-guest-agent # needed by packer
+  - sudo
+  - python-apt       # used by ansible
+  - haveged          # prevent vm boot delays
+  - nano             # set as default editor in .profile
+  - wget
   - curl
-  - psmisc
-  - net-tools
+  - psmisc           # includes pstree
+  - net-tools        # includes ifconfig, netstat
+  # - verse           # used in motd (optional)
   # - lsof
   # - lshw
   # - ncdu
@@ -58,6 +61,7 @@ iserver_obsd_packages:
   - nano    # set as default editor in .profile
   - pstree
   - wget
+  - curl
 
 # packages to install on every Alpine server
 iserver_alpine_packages:
@@ -149,6 +153,3 @@ iserver_bashrc_ubuntu: |
 
 # needs 'verse' installed
 iserver_verse_enabled: false
-
-### CLEANUP (for KVM template) ###
-iserver_is_template: false
