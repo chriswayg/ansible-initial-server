@@ -159,10 +159,10 @@
     import_tasks: customize-debian-ubuntu.yml
 
   ### CLOUD ###
-  - name: Serial Console.
-    import_tasks: serialconsole-debian-ubuntu.yml
-    tags:
-      - vanilla
+  # - name: Serial Console.
+  #   import_tasks: serialconsole-debian-ubuntu.yml
+  #   tags:
+  #     - vanilla
 
   - name: Remove Swapfile - Ubuntu.
     import_tasks: swapfile-ubuntu.yml
