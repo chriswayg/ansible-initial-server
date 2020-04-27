@@ -159,10 +159,10 @@
     import_tasks: customize-alpine.yml
 
   ### CLOUD ###
-  - name: Serial Console.
-    import_tasks: serialconsole-alpine.yml
-    tags:
-      - vanilla
+  # - name: Serial Console.
+  #   import_tasks: serialconsole-alpine.yml
+  #   tags:
+  #     - vanilla
 
   # GROW PARTITION
   - name: Grow Partion Automatically.
