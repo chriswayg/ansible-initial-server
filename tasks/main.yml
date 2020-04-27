@@ -6,6 +6,7 @@
 ## - ADD script: OpenBSD - generate new SSH host keys on first boot to avoid duplicates in cloned VMs
 ## - see individual TODOs in files
 ## - use Ansible handlers for restarting services (instaed of restarting inline)
+## - do not install additional optional packages for vanilla install
 
 - name: Initial Setup - Debian, Ubuntu.
   import_tasks: initial-setup-debian-ubuntu.yml
