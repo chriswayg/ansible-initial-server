@@ -39,6 +39,12 @@
     dest: /etc/legal
   when: ansible_distribution == 'Ubuntu'
 
+- name: Ensure that verse is installed.
+  apt:
+    name: verse
+    state: present
+  when: iserver_verse_enabled
+
 - name: Copy the file which will show a verse via motd.
   copy:
     src: 85-motd-verse
