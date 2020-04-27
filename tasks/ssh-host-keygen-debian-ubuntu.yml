@@ -6,7 +6,6 @@
     dest: /etc/systemd/system/ssh-host-keygen.service
     mode: 0644
   register: enable_ssh_host_keygen
-  when: iserver_is_template
 
 - name: Enable ssh-host-keygen service that generates new SSH host keys on first boot.
   service:

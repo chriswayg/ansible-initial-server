@@ -8,7 +8,6 @@
     dest: /etc/local.d/02_ssh-host-keygen.start
     mode: a+x
   register: enable_ssh_host_keygen
-  when: iserver_is_template
 
 - name: Ensure that local auto-start service is enabled executing ssh-host-keygen.sh on first boot.
   service:
