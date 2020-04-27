@@ -82,13 +82,13 @@
   #   tags:
   #     - vanilla
 
-  - name: Apply network configuration changes.
-    service:
-      name: networking
-      state: restarted
-    when: apply_network_config is changed
-    tags:
-      - vanilla
+  # - name: Apply network configuration changes.
+  #   service:
+  #     name: networking
+  #     state: restarted
+  #   when: apply_network_config is changed
+  #   tags:
+  #     - vanilla
 
   ### SSH ###
   - name: Ensure, that the default user has a SSH authorized key.
