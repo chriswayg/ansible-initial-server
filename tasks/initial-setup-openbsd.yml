@@ -2,6 +2,10 @@
 
 - name: KICKSTART - OpenBSD.
   block:
+  ### BASE PACKAGES ###
+  - name: Base Packages - OpenBSD
+    import_tasks: packages-openbsd.yml
+
   ### SUDOERS ###
   - name: Check if iserver_user exists.
     shell: id -u "{{ iserver_user }}" > /dev/null 2>&1
@@ -29,12 +33,6 @@
     tags:
       - vanilla
 
-  ### BASE PACKAGES ###
-  - name: Base Packages - OpenBSD
-    include_tasks: packages-openbsd.yml
-    tags:
-      - vanilla
-
   ### NETWORKING ###
   - name: Create a blank /etc/issue, if it does not exist.
     file:
@@ -56,9 +54,7 @@
       - vanilla
 
   - name: Networking.
-    include_tasks: networking-openbsd.yml
-    tags:
-      - vanilla
+    import_tasks: networking-openbsd.yml
 
   - name: Copy original hosts file to back it up (once).
     command: cp /etc/hosts /etc/hosts.original
@@ -82,7 +78,7 @@
       - vanilla
 
   ### SSH ###
-  - name: Ensure, that the default user has an SSH authorized key.
+  - name: Ensure, that the default user has a SSH authorized key.
     authorized_key:
       user: "{{ iserver_user }}"
       state: present
@@ -123,31 +119,39 @@
 
   # TODO
   # - name: New SSH host keys on first boot.
-  #   include_tasks: ssh-host-keygen-openbsd.yml
+  #   import_tasks: ssh-host-keygen-openbsd.yml
+  # only run when is_template tag is specifically requested
+  # tags:
+  #   - never
+  #   - is_template
 
   ### CUSTOMIZE ###
   - name: Timezone.
-    include_tasks: timezone-most-distros.yml
+    import_tasks: timezone-most-distros.yml
     tags:
       - vanilla
 
   - name: Customize.
-    include_tasks: customize-openbsd.yml
+    import_tasks: customize-openbsd.yml
 
   ### CLOUD ###
   - name: Serial Console.
-    include_tasks: serialconsole-openbsd.yml
+    import_tasks: serialconsole-openbsd.yml
     tags:
       - vanilla
 
   # TODO GROW PARTITION
   # - name: Grow Partition Automatically.
-  #   include_tasks: growpartition-openbsd.yml
+  #   import_tasks: growpartition-openbsd.yml
 
   ### CLEANUP ###
   # TODO
   # - name: Cleanup.
-  #   include_tasks: cleanup-openbsd.yml
+  #   import_tasks: cleanup-openbsd.yml
+  #   # only run when is_template tag is specifically requested
+  #   tags:
+  #     - never
+  #     - is_template
 
   # or use '*'
   - name: Prevent password authentication for root.

@@ -3,14 +3,9 @@
 # For this block we use 'su' on first-run, because root cannot ssh into the server.
 - name: KICKSTART - Debian, Ubuntu.
   block:
-  - name: Ensure that python-apt and sudo is installed.
-    apt:
-      name: "{{ packages }}"
-      state: present
-    vars:
-      packages:
-      - python-apt
-      - sudo
+  ### BASE PACKAGES ###
+  - name: Base Packages.
+    import_tasks: packages-debian-ubuntu.yml
 
   ### SUDOERS ###
   - name: Check if iserver_user exists.
@@ -40,12 +35,6 @@
     tags:
       - vanilla
 
-  ### BASE PACKAGES ###
-  - name: Base Packages.
-    include_tasks: packages-debian-ubuntu.yml
-    tags:
-      - vanilla
-
   ### NETWORKING ###
   - name: Create a blank /etc/issue, if it does not exist.
     file:
@@ -67,13 +56,13 @@
       - vanilla
 
   - name: Networking - Debian.
-    include_tasks: networking-debian.yml
+    import_tasks: networking-debian.yml
     when: ansible_distribution == 'Debian'
     tags:
       - vanilla
 
   - name: Networking - Ubuntu.
-    include_tasks: networking-ubuntu.yml
+    import_tasks: networking-ubuntu.yml
     when: ansible_distribution == 'Ubuntu'
     tags:
       - vanilla
@@ -142,34 +131,42 @@
       - vanilla
 
   - name: New SSH host keys on first boot - Debian, Ubuntu
-    include_tasks: ssh-host-keygen-debian-ubuntu.yml
+    import_tasks: ssh-host-keygen-debian-ubuntu.yml
+    # only run when is_template tag is specifically requested
+    tags:
+      - never
+      - is_template
 
   ### CUSTOMIZE ###
   - name: Timezone.
-    include_tasks: timezone-most-distros.yml
+    import_tasks: timezone-most-distros.yml
     tags:
       - vanilla
 
   - name: Customize.
-    include_tasks: customize-debian-ubuntu.yml
+    import_tasks: customize-debian-ubuntu.yml
 
   ### CLOUD ###
   - name: Serial Console.
-    include_tasks: serialconsole-debian-ubuntu.yml
+    import_tasks: serialconsole-debian-ubuntu.yml
     tags:
       - vanilla
 
   - name: Remove Swapfile - Ubuntu.
-    include_tasks: swapfile-ubuntu.yml
+    import_tasks: swapfile-ubuntu.yml
     when: ansible_distribution == 'Ubuntu'
 
   # GROW PARTITION
   - name: Grow Partion Automatically.
-    include_tasks: growpartition-debian-ubuntu.yml
+    import_tasks: growpartition-debian-ubuntu.yml
 
   ### CLEANUP ###
   - name: Cleanup.
-    include_tasks: cleanup-debian-ubuntu.yml
+    import_tasks: cleanup-debian-ubuntu.yml
+    # only run when is_template tag is specifically requested
+    tags:
+      - never
+      - is_template
 
   # or use '*'
   - name: Prevent password authentication for root.

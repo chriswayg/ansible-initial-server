@@ -5,9 +5,7 @@
   block:
   ### BASE PACKAGES ###
   - name: Base Packages.
-    include_tasks: packages-alpine.yml
-    tags:
-      - vanilla
+    import_tasks: packages-alpine.yml
 
   ### SUDOERS ###
   - name: Ensure group "{{ iserver_user }}" exists
@@ -62,9 +60,7 @@
       - vanilla
 
   - name: Networking.
-    include_tasks: networking-alpine.yml
-    tags:
-      - vanilla
+    import_tasks: networking-alpine.yml
 
   - name: Copy original hosts file to back it up (once).
     command: cp /etc/hosts /etc/hosts.original
@@ -82,7 +78,9 @@
       - vanilla
 
   - name: Apply network configuration changes.
-    command: /etc/init.d/networking restart
+    service:
+      name: networking
+      state: restarted
     when: apply_network_config is changed
     tags:
       - vanilla
@@ -134,30 +132,38 @@
       - vanilla
 
   - name: New SSH host keys on first boot.
-    include_tasks: ssh-host-keygen-alpine.yml
+    import_tasks: ssh-host-keygen-alpine.yml
+    # only run when is_template tag is specifically requested
+    tags:
+      - never
+      - is_template
 
   ### CUSTOMIZE ###
   - name: Timezone.
-    include_tasks: timezone-alpine.yml
+    import_tasks: timezone-alpine.yml
     tags:
       - vanilla
 
   - name: Customize.
-    include_tasks: customize-alpine.yml
+    import_tasks: customize-alpine.yml
 
   ### CLOUD ###
   - name: Serial Console.
-    include_tasks: serialconsole-alpine.yml
+    import_tasks: serialconsole-alpine.yml
     tags:
       - vanilla
 
   # GROW PARTITION
   - name: Grow Partion Automatically.
-    include_tasks: growpartition-alpine.yml
+    import_tasks: growpartition-alpine.yml
 
   ### CLEANUP ###
   - name: Cleanup.
-    include_tasks: cleanup-alpine.yml
+    import_tasks: cleanup-alpine.yml
+    # only run when is_template tag is specifically requested
+    tags:
+      - never
+      - is_template
 
   # or use '*'
   - name: Prevent password authentication for root.
