@@ -9,6 +9,8 @@
     changed_when: false
     register: user_exists
 
+  # TODO change to create a non-existing user
+
   - name: Add the default user with passwordless doas.
     template:
       src: doas.conf.j2

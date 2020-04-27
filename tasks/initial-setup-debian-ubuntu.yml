@@ -12,11 +12,16 @@
       - sudo
 
   ### SUDOERS ###
-  - name: Check if iserver_user exists.
-    shell: id -u "{{ iserver_user }}" > /dev/null 2>&1
-    ignore_errors: True
-    changed_when: false
-    register: user_exists
+  - name: Ensure group "{{ iserver_user }}" exists
+    group:
+      name: "{{ iserver_user }}"
+      state: present
+
+  - name: Ensure that the default user "{{ iserver_user }}" exists
+    user:
+      name: "{{ iserver_user }}"
+      group: "{{ iserver_user }}"
+      password: '*'
 
   - name: Add the default user with passwordless sudo to sodoers.d
     template:
