@@ -150,10 +150,10 @@
       - is_template
 
   ### CUSTOMIZE ###
-  - name: Timezone.
-    import_tasks: timezone-most-distros.yml
-    tags:
-      - vanilla
+  # - name: Timezone.
+  #   import_tasks: timezone-most-distros.yml
+  #   tags:
+  #     - vanilla
 
   - name: Customize.
     import_tasks: customize-debian-ubuntu.yml
