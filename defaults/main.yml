@@ -38,6 +38,7 @@ iserver_alpine_repos:
 
 # packages to install on every Debian/Ubuntu server
 iserver_deb_packages:
+  - openssh-server   # needed for Travis testing
   - qemu-guest-agent # needed by packer
   - sudo
   - python-apt       # used by ansible
