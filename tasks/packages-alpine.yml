@@ -15,16 +15,15 @@
     line: "{{ item }}"
   loop: "{{ iserver_alpine_repos }}"
 
-- name: Ensure, that all packages are updated.
+- name: Ensure that all packages are updated.
   apk:
     update_cache: yes
   changed_when: False
 
-- name: Ensure, that all packages are upgraded.
+- name: Ensure that all packages are upgraded.
   apk:
     upgrade: yes
-  tags:
-    - travis
+  changed_when: False
 
 - name: Ensure that initial packages are installed.
   apk:
