@@ -19,11 +19,13 @@
     mode: a-x
   when: ansible_distribution == 'Ubuntu'
 
-# - name: Remove Ubuntu livepatch notifications from motd.
-#   file:
-#     path: /etc/update-motd.d/80-livepatch
-#     mode: a-x
-#   when: ansible_distribution == 'Ubuntu'
+- name: Remove Ubuntu livepatch notifications from motd.
+  file:
+    path: /etc/update-motd.d/80-livepatch
+    mode: a-x
+  when: ansible_distribution == 'Ubuntu'
+  tags:
+    - travis
 
 - name: Remove Ubuntu ads from motd
   lineinfile:

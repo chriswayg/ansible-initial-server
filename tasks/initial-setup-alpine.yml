@@ -74,21 +74,23 @@
     tags:
       - vanilla
 
-  # - name: Create new hosts file.
-  #   template:
-  #     src: hosts.j2
-  #     dest: /etc/hosts
-  #   register: apply_network_config
-  #   tags:
-  #     - vanilla
+  - name: Create new hosts file.
+    template:
+      src: hosts.j2
+      dest: /etc/hosts
+    register: apply_network_config
+    tags:
+      - vanilla
+      - travis
 
-  # - name: Apply network configuration changes.
-  #   service:
-  #     name: networking
-  #     state: restarted
-  #   when: apply_network_config is changed
-  #   tags:
-  #     - vanilla
+  - name: Apply network configuration changes.
+    service:
+      name: networking
+      state: restarted
+    when: apply_network_config is changed
+    tags:
+      - vanilla
+      - travis
 
   ### SSH ###
   - name: Ensure that sshd is enabled and started.
@@ -158,11 +160,12 @@
   - name: Customize.
     import_tasks: customize-alpine.yml
 
-  ### CLOUD ###
-  # - name: Serial Console.
-  #   import_tasks: serialconsole-alpine.yml
-  #   tags:
-  #     - vanilla
+  ## CLOUD ###
+  - name: Serial Console.
+    import_tasks: serialconsole-alpine.yml
+    tags:
+      - vanilla
+      - travis
 
   # GROW PARTITION
   - name: Grow Partion Automatically.

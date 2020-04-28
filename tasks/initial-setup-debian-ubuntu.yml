@@ -60,24 +60,27 @@
     args:
       creates: /etc/issue.original
 
-  # - name: Set hostname.
-  #   hostname:
-  #     name: "{{ iserver_hostname }}"
-  #   register: apply_network_config
-  #   tags:
-  #     - vanilla
+  - name: Set hostname.
+    hostname:
+      name: "{{ iserver_hostname }}"
+    register: apply_network_config
+    tags:
+      - vanilla
+      - travis
 
-  # - name: Networking - Debian.
-  #   import_tasks: networking-debian.yml
-  #   when: ansible_distribution == 'Debian'
-  #   tags:
-  #     - vanilla
-  #
-  # - name: Networking - Ubuntu.
-  #   import_tasks: networking-ubuntu.yml
-  #   when: ansible_distribution == 'Ubuntu'
-  #   tags:
-  #     - vanilla
+  - name: Networking - Debian.
+    import_tasks: networking-debian.yml
+    when: ansible_distribution == 'Debian'
+    tags:
+      - vanilla
+      - travis
+
+  - name: Networking - Ubuntu.
+    import_tasks: networking-ubuntu.yml
+    when: ansible_distribution == 'Ubuntu'
+    tags:
+      - vanilla
+      - travis
 
   - name: Copy original hosts file to back it up (once).
     command: cp /etc/hosts /etc/hosts.original
@@ -86,21 +89,23 @@
     tags:
       - vanilla
 
-  # - name: Create new hosts file.
-  #   template:
-  #     src: hosts.j2
-  #     dest: /etc/hosts
-  #   register: apply_network_config
-  #   tags:
-  #     - vanilla
+  - name: Create new hosts file.
+    template:
+      src: hosts.j2
+      dest: /etc/hosts
+    register: apply_network_config
+    tags:
+      - vanilla
+      - travis
 
-  # - name: Apply network configuration changes.
-  #   service:
-  #     name: systemd-logind
-  #     state: restarted
-  #   when: apply_network_config is changed
-  #   tags:
-  #     - vanilla
+  - name: Apply network configuration changes.
+    service:
+      name: systemd-logind
+      state: restarted
+    when: apply_network_config is changed
+    tags:
+      - vanilla
+      - travis
 
   ### SSH ###
   - name: Ensure, that the default user has a SSH authorized key.
@@ -149,21 +154,23 @@
       - never
       - is_template
 
-  ### CUSTOMIZE ###
-  # - name: Timezone.
-  #   import_tasks: timezone-most-distros.yml
-  #   tags:
-  #     - vanilla
+  ## CUSTOMIZE ###
+  - name: Timezone.
+    import_tasks: timezone-most-distros.yml
+    tags:
+      - vanilla
+      - travis
 
   - name: Customize.
     import_tasks: customize-debian-ubuntu.yml
 
   ### CLOUD ###
-  # - name: Serial Console.
-  #   import_tasks: serialconsole-debian-ubuntu.yml
-  #   tags:
-  #     - vanilla
-
+  - name: Serial Console.
+    import_tasks: serialconsole-debian-ubuntu.yml
+    tags:
+      - vanilla
+      - travis
+  
   - name: Remove Swapfile - Ubuntu.
     import_tasks: swapfile-ubuntu.yml
     when: ansible_distribution == 'Ubuntu'
