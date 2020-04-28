@@ -19,11 +19,12 @@
     mode: a-x
   when: ansible_distribution == 'Ubuntu'
 
+# this file is apparently not present in some installations
 - name: Remove Ubuntu livepatch notifications from motd.
   file:
     path: /etc/update-motd.d/80-livepatch
     mode: a-x
-  when: ansible_distribution == 'Ubuntu'
+  when: ansible_distribution == 'Ubuntu' and ansible_distribution_version == '18.04'
   tags:
     - travis
 
