@@ -188,11 +188,12 @@
       - never
       - is_template
 
-  # or use '*'
-  - name: Prevent password authentication for root.
+  - name: Lock root account to prevent logins for root from console.
     user:
       name: root
+      # or use '*'
       password: '!'
+    when: iserver_lock_root
     tags:
       - vanilla
 

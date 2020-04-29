@@ -6,6 +6,7 @@
 # this Ansible role is not intended to add or change a default user
 iserver_user: deploy
 iserver_become: sudo ## do not chanage this ##
+iserver_lock_root: false
 
 ### BASE PACKAGES ###
 iserver_debian_repos:
@@ -27,6 +28,16 @@ iserver_ubuntu_repos:
   - deb-src http://repo.myloc.de/ubuntu/ bionic-backports main restricted universe multiverse
   - deb http://security.ubuntu.com/ubuntu bionic-security main restricted universe multiverse
   - deb-src http://security.ubuntu.com/ubuntu bionic-security main restricted universe multiverse
+
+  ## Ubuntu 20.04 example
+  # - deb http://repo.myloc.de/ubuntu/ focal main restricted universe multiverse
+  # - deb-src http://repo.myloc.de/ubuntu/ focal main restricted universe multiverse
+  # - deb http://repo.myloc.de/ubuntu/ focal-updates main restricted universe multiverse
+  # - deb-src http://repo.myloc.de/ubuntu/ focal-updates main restricted universe multiverse
+  # - deb http://repo.myloc.de/ubuntu/ focal-backports main restricted universe multiverse
+  # - deb-src http://repo.myloc.de/ubuntu/ focal-backports main restricted universe multiverse
+  # - deb http://security.ubuntu.com/ubuntu focal-security main restricted universe multiverse
+  # - deb-src http://security.ubuntu.com/ubuntu focal-security main restricted universe multiverse
 
 iserver_alpine_repos:
   ## Alpine 3.11 example
