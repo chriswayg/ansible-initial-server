@@ -1,4 +1,5 @@
 # Ansible managed
+# Debian, Ubuntu
 
 [Unit]
 Description=OpenSSH Server Key Generation

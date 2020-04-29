@@ -1,4 +1,5 @@
-# Initial Setup - Alpine.
+### Initial Setup ###
+# Alpine
 
 # Assumes that: Alpine SSH login with password for root allowed
 - name: KICKSTART - Alpine.

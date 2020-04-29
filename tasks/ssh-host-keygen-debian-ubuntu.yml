@@ -1,4 +1,5 @@
 # SSH-HOST-KEYGEN (for KVM template)
+# Debian, Ubuntu
 
 - name: Copy systemd unitfile for OpenSSH Server Key Generation.
   copy:

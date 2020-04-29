@@ -1,5 +1,6 @@
 #!/bin/bash
 # Ansible managed
+# Ubuntu
 
 # show a verse of the day, if verse is installed
 if [ -f /usr/bin/verse ]; then

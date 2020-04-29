@@ -1,4 +1,5 @@
 ### BASE PACKAGES ###
+# Debian, Ubuntu
 
 # replaces sources.list repos.
 - name: Move original /etc/apt/sources.list to back it up (once).

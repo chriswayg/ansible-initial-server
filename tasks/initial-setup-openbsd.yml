@@ -1,4 +1,5 @@
-# Initial Setup - OpenBSD.
+### Initial Setup ###
+# OpenBSD
 
 - name: KICKSTART - OpenBSD.
   block:

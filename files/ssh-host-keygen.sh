@@ -1,5 +1,6 @@
 #!/bin/sh
 # Ansible managed
+# Alpine
 
 # OpenSSH Server Key Re-Generation - Alpine (on first boot in new VM)
 if [[ -f /etc/run-ssh-host-keygen-once ]]; then

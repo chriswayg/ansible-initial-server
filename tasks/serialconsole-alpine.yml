@@ -1,4 +1,5 @@
 # SERIAL CONSOLE
+# Alpine
 
 - name: Change update-extlinux.conf to get a login prompt at a serial console.
   replace:

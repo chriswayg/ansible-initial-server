@@ -1,4 +1,5 @@
 ### CUSTOMIZE ###
+# Debian, Ubuntu
 
 - name: Move the original /etc/motd to back it up (once).
   command: mv /etc/motd /etc/motd.original
@@ -20,13 +21,21 @@
   when: ansible_distribution == 'Ubuntu'
 
 # this file is apparently not present in some installations
+- name: Check if livepatch motd file exists.
+  stat:
+    path: /etc/update-motd.d/80-livepatch
+  register: file_result
+
 - name: Remove Ubuntu livepatch notifications from motd.
   file:
     path: /etc/update-motd.d/80-livepatch
     mode: a-x
-  when: ansible_distribution == 'Ubuntu' and ansible_distribution_version == '18.04'
-  tags:
-    - travis
+  when: ansible_distribution == 'Ubuntu' and file_result.stat.exists
+
+- name: upgrade software
+  command: /opt/software/bin/upgrade
+  args:
+    removes: etc/software/software.conf.upgrade
 
 - name: Remove Ubuntu ads from motd
   lineinfile:

@@ -1,4 +1,5 @@
 # SERIAL CONSOLE
+# Debian, Ubuntu
 
 - name: Enable the serial console by modifying grub.
   lineinfile:

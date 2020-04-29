@@ -1,8 +1,9 @@
 #!/bin/bash
 # Ansible managed
+# Ubuntu
 
 cp /etc/issue.original /etc/issue
-printf "SSH key fingerprint: \n$(ssh-keygen -l -f /etc/ssh/ssh_host_ecdsa_key.pub)\n\n" >> /etc/issue
-sleep 1
-printf "Server IP: $(ip -o route get to 1.1.1.1 | sed -n 's/.*src \([0-9.]\+\).*/\1/p')\n\n" >> /etc/issue
+printf "SSH key fingerprint: \n$(ssh-keygen -l -f /etc/ssh/ssh_host_ecdsa_key.pub)\n" >> /etc/issue
+sleep 2
+printf "\nSSH user: {{ iserver_user }}     Server IP: $(ip -o route get to 1.1.1.1 | sed -n 's/.*src \([0-9.]\+\).*/\1/p')\n\n" >> /etc/issue
 EOF

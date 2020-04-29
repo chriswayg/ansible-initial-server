@@ -16,7 +16,7 @@
 
 - name: Set fixed IP gateway.
   template:
-    src: mygate.j2
+    src: mygate-openbsd.j2
     dest: /etc/mygate
   register: apply_network_config
   when: set_fixed_IP

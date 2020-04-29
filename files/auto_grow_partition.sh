@@ -1,5 +1,6 @@
 #!/bin/bash
 # Ansible managed
+# Debian, Ubuntu
 
 growpart -N /dev/sda 1
 if [ $? -eq 0 ]; then

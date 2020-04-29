@@ -1,4 +1,6 @@
 # GROW PARTITION
+# Debian, Ubuntu
+
 - name: Ensure that cloud-guest-utils including growpart is installed.
   apt:
     name: cloud-guest-utils

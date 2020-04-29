@@ -1,4 +1,5 @@
 # TIMEZONE
+# Debian, Ubuntu, OpenBSD
 
 - name: Set timezone.
   timezone:

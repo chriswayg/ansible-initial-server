@@ -1,4 +1,5 @@
 # DISABLE SWAPFILE
+# Ubuntu
 
 # Ubuntu 'server' uses /swapfile
 - name: Disable swap if /swapfile exists.

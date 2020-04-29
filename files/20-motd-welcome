@@ -1,5 +1,6 @@
 #!/bin/bash
 # Ansible managed
+# Ubuntu
 
 source /etc/os-release
 echo ""

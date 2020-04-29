@@ -1,4 +1,5 @@
-# Initial Setup - Debian, Ubuntu.
+### Initial Setup ###
+# Debian, Ubuntu
 
 # For this block we use 'su' on first-run, because root cannot ssh into the server.
 - name: KICKSTART - Debian, Ubuntu.
@@ -170,7 +171,7 @@
     tags:
       - vanilla
       - travis
-  
+
   - name: Remove Swapfile - Ubuntu.
     import_tasks: swapfile-ubuntu.yml
     when: ansible_distribution == 'Ubuntu'

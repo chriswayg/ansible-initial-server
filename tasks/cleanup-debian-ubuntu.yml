@@ -1,4 +1,5 @@
 ### CLEANUP ###
+# Debian, Ubuntu
 
 # about 400MB on an Ubuntu image - @jarno https://askubuntu.com/a/620515/831854
 - name: Regitering previous kernel versions to be removed.
