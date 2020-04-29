@@ -30,7 +30,7 @@
     dest: /etc/apt/sources.list
     force: no
 
-- name: Ensure, that all packages are updated and upgraded.
+- name: Ensure that all packages are updated and upgraded.
   apt:
     upgrade: "yes"
     update_cache: yes
