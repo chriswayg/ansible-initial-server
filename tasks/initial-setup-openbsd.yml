@@ -4,7 +4,7 @@
 - name: KICKSTART - OpenBSD.
   block:
   ### SUDOERS ###
-  # TODO check that creating a non-existing user works as expected
+  # TODO check that creating a new user works as expected
   - name: Ensure group "{{ iserver_user }}" exists
     group:
       name: "{{ iserver_user }}"
@@ -125,7 +125,7 @@
       dest: "{{ iserver_ssh_banner }}"
     when: iserver_ssh_banner != "none"
 
-  # TODO
+  # TODO Create New SSH host keys on first boot
   # - name: New SSH host keys on first boot.
   #   import_tasks: ssh-host-keygen-openbsd.yml
   # only run when is_template tag is specifically requested
@@ -153,13 +153,12 @@
   #   import_tasks: growpartition-openbsd.yml
 
   ### CLEANUP ###
-  # TODO
-  # - name: Cleanup.
-  #   import_tasks: cleanup-openbsd.yml
-  #   # only run when is_template tag is specifically requested
-  #   tags:
-  #     - never
-  #     - is_template
+  - name: Cleanup.
+    import_tasks: cleanup-openbsd.yml
+    # only runs when the is_template tag is specifically requested
+    tags:
+      - never
+      - is_template
 
   # or use '*'
   - name: Prevent password authentication for root.
