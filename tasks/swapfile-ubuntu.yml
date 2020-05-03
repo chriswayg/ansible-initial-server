@@ -19,8 +19,8 @@
     src: /swapfile
     fstype: swap
     opts: sw
-    passno: 0
-    dump: 0
+    passno: "0"
+    dump: "0"
     state: absent
 
 - name: Ensure swap.img is disabled in /etc/fstab.
@@ -29,8 +29,8 @@
     src: /swap.img
     fstype: swap
     opts: sw
-    passno: 0
-    dump: 0
+    passno: "0"
+    dump: "0"
     state: absent
 
 - name: Ensure swapfile doesn't exist.
