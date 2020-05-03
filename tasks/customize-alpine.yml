@@ -12,6 +12,13 @@
   args:
     creates: /etc/motd
 
+# TODO dynamic motd
+# - name: Copy the file which will show a welcome motd after login.
+#   template:
+#     src: motd-welcome.j2
+#     dest: /etc/motd
+#     mode: a+x
+
 - name: Add a block of commands in the root user profile.
   blockinfile:
     path: "/root/.profile"

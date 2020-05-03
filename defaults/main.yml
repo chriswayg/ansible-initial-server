@@ -1,12 +1,12 @@
 ---
 # defaults file for ansible-initial-server
-
+iserver_is_a_vm: True
 ### SUDOERS ###
 # use the name of the default user which was used during installation
 # this Ansible role is not intended to add or change a default user
 iserver_user: deploy
 iserver_become: sudo ## do not chanage this ##
-iserver_lock_root: false
+iserver_lock_root: False
 
 ### BASE PACKAGES ###
 iserver_debian_repos:
@@ -112,8 +112,37 @@ iserver_ssh_banner: none # or /etc/ssh/issue.net
 ### CUSTOMIZE ###
 iserver_timezone: UTC
 
-iserver_user_profile: |
-  # no-op
+# blocks added to profile/bashrc in these dirs:
+iserver_users_dirs:
+  - /root
+  - /home/{{ iserver_user }}
+
+# Added to profile in iserver_users_dirs (Debian, Ubuntu)
+iserver_deb_user_profile: |
+  EDITOR=/usr/local/bin/nano
+
+iserver_bashrc_root_debian: |
+  export LS_OPTIONS='--color=auto'
+  eval "`dircolors`"
+  alias ls='ls $LS_OPTIONS'
+  alias ll='ls $LS_OPTIONS -l'
+  alias l='ls $LS_OPTIONS -lA'
+  export PS1="\[\033[1;31m\][\u@\h:\w]#\[\033[0m\] "
+
+iserver_bashrc_user_debian: |
+  export LS_OPTIONS='--color=auto'
+  eval "`dircolors`"
+  alias ls='ls $LS_OPTIONS'
+  alias ll='ls $LS_OPTIONS -l'
+  alias l='ls $LS_OPTIONS -lA'
+  export PS1="\[\033[1;34m\][\u@\h:\w]$\[\033[0m\] "
+
+# Ubuntu dircolors are already activated
+iserver_bashrc_root_ubuntu: |
+  export PS1="\[\033[1;31m\][\u@\h:\w]#\[\033[0m\] "
+
+iserver_bashrc_user_ubuntu: |
+  export PS1="\[\033[1;34m\][\u@\h:\w]$\[\033[0m\] "
 
 # OpenBSD profiles
 iserver_obsd_root_profile: |
@@ -149,21 +178,15 @@ iserver_alpine_user_profile: |
   alias ls='ls $LS_OPTIONS'
   export EDITOR=/usr/bin/nano
 
-# iserver_bashrc block added to:
-iserver_users_dirs:
-  - /root
-  - /home/{{ iserver_user }}
+# motd
+iserver_motd_welcome: |
+  cat /etc/motd-image
+  echo ""
+  echo " Welcome to $PRETTY_NAME Server"
+  echo ""
 
-# in Ubuntu, this is redundant
-iserver_bashrc_debian: |
-  export LS_OPTIONS='--color=auto'
-  eval "`dircolors`"
-  alias ls='ls $LS_OPTIONS'
-  alias ll='ls $LS_OPTIONS -l'
-  alias l='ls $LS_OPTIONS -lA'
-
-iserver_bashrc_ubuntu: |
-  # no-op
+# name of disk to show available space on login
+iserver_main_disk: sda1
 
 # needs 'verse' installed
-iserver_verse_enabled: false
+iserver_verse_enabled: False
