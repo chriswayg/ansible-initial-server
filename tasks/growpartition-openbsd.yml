@@ -2,19 +2,17 @@
 
 # TODO adapt to and test with OpenBSD
 
+# # There seems to be no cloud-utils or growpart for OpenBSD
 # - name: Ensure that prerequisites are installed.
-#   apk:
+#   openbsd_pkg:
 #     name: "{{ packages }}"
 #     state: present
 #   vars:
 #     packages:
-#     - nettle@edge     # A low-level cryptographic library (prereq for cloud-utils)
-#     - gnutls@edge     # A TLS protocol implementation (prereq for cloud-utils)
-#     - cloud-utils@testing # Useful set of utilities for interacting with a cloud (growpart)
-#     - e2fsprogs-extra # Ext2/3/4 filesystem extra utilities (resize2fs)
+#     - cloud-utils # Useful set of utilities for interacting with a cloud (growpart)
 
-- name: Copy script to automatically Grow Partition after resize by Proxmox.
-  copy:
-    src: auto_grow_partition.start
-    dest: /etc/local.d/05_auto_grow_partition.start
-    mode: a+x
+# - name: Copy script to automatically Grow Partition after resize by Proxmox.
+#   copy:
+#     src: auto_grow_partition.sh
+#     dest: /usr/local/bin/auto_grow_partition.sh
+#     mode: a+x
