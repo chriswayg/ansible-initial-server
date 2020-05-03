@@ -5,22 +5,34 @@
   block:
   ### SUDOERS ###
   # TODO check that creating a new user works as expected
-  - name: Ensure group "{{ iserver_user }}" exists
-    group:
-      name: "{{ iserver_user }}"
-      state: present
-
-  - name: Ensure that the default user "{{ iserver_user }}" exists
-    user:
-      name: "{{ iserver_user }}"
-      group: "{{ iserver_user }}"
-      password: '*'
+  # - name: Ensure group "{{ iserver_user }}" exists
+  #   group:
+  #     name: "{{ iserver_user }}"
+  #     state: present
+  #
+  # - name: Ensure that the default user "{{ iserver_user }}" exists
+  #   user:
+  #     name: "{{ iserver_user }}"
+  #     group: "{{ iserver_user }}"
+  #     password: '*'
+  #
+  # - name: Add the default user with passwordless doas.
+  #   template:
+  #     src: doas.conf.j2
+  #     dest: /etc/doas.conf
+  #     mode: 0440
+  - name: Check if iserver_user exists.
+    shell: id -u "{{ iserver_user }}" > /dev/null 2>&1
+    ignore_errors: True
+    changed_when: false
+    register: user_exists
 
   - name: Add the default user with passwordless doas.
     template:
       src: doas.conf.j2
       dest: /etc/doas.conf
       mode: 0440
+    when: user_exists is succeeded
   ## End of block KICKSTART
   become: true
   become_method: doas
