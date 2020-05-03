@@ -1,8 +1,0 @@
-#!/bin/bash
-# Ansible managed
-# Ubuntu
-
-source /etc/os-release
-echo ""
-echo " Welcome to $PRETTY_NAME Server"
-echo ""

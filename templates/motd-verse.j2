@@ -1,6 +1,6 @@
 #!/bin/bash
 # Ansible managed
-# Ubuntu
+# Ubuntu, Debian
 
 # show a verse of the day, if verse is installed
 if [ -f /usr/bin/verse ]; then
@@ -8,3 +8,8 @@ if [ -f /usr/bin/verse ]; then
     /usr/bin/verse
     echo ""
 fi
+
+uname -srm
+w -s
+echo -e "\nDisk usage      Size  Used Avail Use% Mount"
+df -h | grep {{ iserver_main_disk }} # disk space
