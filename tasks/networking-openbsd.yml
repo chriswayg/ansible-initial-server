@@ -1,6 +1,6 @@
 ### NETWORKING ###
 
-## TODO:
+## TODO: Test networking; Add a route via main host IP
 # - Add a route via {{ iserver_host_main_ip }}
 # - use handler for apply_network_config
 # - test in Proxmox

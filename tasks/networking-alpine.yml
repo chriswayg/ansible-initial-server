@@ -7,7 +7,7 @@
     dest: /etc/network/if-up.d/show-ip-address
     mode: a+x
 
-# TODO test this
+# TODO test Set fixed IP via network/interfaces in Alpine
 - name: Set fixed IP via network/interfaces.
   template:
     src: interfaces.j2
