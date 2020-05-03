@@ -180,7 +180,7 @@ iserver_alpine_user_profile: |
 
 # motd
 iserver_motd_welcome: |
-  cat /etc/motd-image
+  #cat /etc/motd-image
   echo ""
   echo " Welcome to $PRETTY_NAME Server"
   echo ""
