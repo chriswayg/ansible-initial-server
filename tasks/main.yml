@@ -1,11 +1,10 @@
 ---
 # MAIN tasks file for ansible-initial-server
 
-## TODO:
-## - see individual TODOs in files
+## TODO: see also individual TODOs in files
 ## - check that it works with a default Ubuntu 18.04 ISO server install (probably using 'su' is not needed)
 ## - ADD script: OpenBSD - generate new SSH host keys on first boot to avoid duplicates in cloned VMs
-## - use Ansible handlers for restarting services (instaed of restarting inline)
+## - use Ansible handlers for restarting services (instaed of restarting inline, partially done)
 ## - do not install additional optional packages for vanilla install
 
 - name: Initial Setup - Debian, Ubuntu.
