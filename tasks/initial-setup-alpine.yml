@@ -109,25 +109,29 @@
       - vanilla
 
   #'UseDNS no' avoids login delays when the remote client's DNS cannot be resolved
-  - name: Disallow root SSH access, only allow SSH key login.
+  - name: Apply SSHD configuration.
     lineinfile:
       path: /etc/ssh/sshd_config
       state: present
-      regexp: "{{ item.regexp }}"
-      line: "{{ item.line }}"
+      regexp: '^#?\s*{{ item.key }}\s'
+      line:   '{{ item.key }} {{ item.value }}'
       validate: '/usr/sbin/sshd -t -f %s'
     with_items:
-    - regexp: '^PermitRootLogin'
-      line:   'PermitRootLogin no'
-    - regexp: '^PasswordAuthentication'
-      line:   'PasswordAuthentication no'
-    - regexp: '^UseDNS'
-      line:   'UseDNS no'
-    - regexp: '^Banner'
-      line:   'Banner {{ iserver_ssh_banner }}'
-    - regexp: '^Port'
-      line:   'Port {{ iserver_ssh_port }}'
-    register: restart_ssh
+    - key:   "PermitRootLogin"
+      value: "no"
+    - key:   "PasswordAuthentication"
+      value: "no"
+    - key:   "ChallengeResponseAuthentication"
+      value: "no"
+    - key:   "UsePAM"
+      value: "yes"
+    - key:   "UseDNS"
+      value: "no"
+    - key:   "Banner"
+      value: "{{ iserver_ssh_banner }}"
+    - key:   "Port"
+      value: "{{ iserver_ssh_port }}"
+    notify: Restart SSHD
     tags:
       - vanilla
 
@@ -136,14 +140,6 @@
       src: issue.net
       dest: "{{ iserver_ssh_banner }}"
     when: iserver_ssh_banner != "none"
-
-  - name: Restart SSH server.
-    service:
-      name: sshd
-      state: restarted
-    when: restart_ssh is changed
-    tags:
-      - vanilla
 
   - name: New SSH host keys on first boot.
     import_tasks: ssh-host-keygen-alpine.yml
