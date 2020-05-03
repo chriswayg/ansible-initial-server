@@ -7,12 +7,29 @@
     creates: /etc/motd.original
   when: ansible_distribution == 'Debian'
 
-- name: Copy the file which will show a welcome motd after login.
+- name: Copy a motd ascii image file.
   copy:
-    src: 20-motd-welcome
-    dest: /etc/update-motd.d/20-motd-welcome
+    src: motd-image
+    dest: /etc/motd-image
+
+- name: Copy the file which will show a welcome motd after login.
+  template:
+    src: motd-welcome.j2
+    dest: /etc/update-motd.d/15-motd-welcome
     mode: a+x
-  when: ansible_distribution == 'Debian'
+
+- name: Ensure that verse is installed.
+  apt:
+    name: verse
+    state: present
+  when: iserver_verse_enabled
+
+- name: Copy the file which will show a verse and disk space via motd.
+  template:
+    src: motd-verse.j2
+    dest: /etc/update-motd.d/85-motd-verse
+    mode: a+x
+  when: iserver_verse_enabled
 
 - name: Remove Ubuntu help-text from motd.
   file:
@@ -51,50 +68,42 @@
     dest: /etc/legal
   when: ansible_distribution == 'Ubuntu'
 
-- name: Ensure that verse is installed.
-  apt:
-    name: verse
-    state: present
-  when: iserver_verse_enabled
-
-- name: Copy the file which will show a verse via motd.
-  copy:
-    src: 85-motd-verse
-    dest: /etc/update-motd.d/85-motd-verse
-    mode: a+x
-  when: iserver_verse_enabled
-
-- name: Add a block of commands in the default user profile.
+- name: Add a block of commands to the root and the default user profile.
   blockinfile:
-    path: "/home/{{ iserver_user }}/.profile"
+    path: "{{ item }}/.profile"
     block: |
-      {{ iserver_user_profile }}
-    marker: "# {mark} ANSIBLE MANAGED BLOCK"
-
-- name: Add a block of bashrc config to root and the default user (Debian).
-  blockinfile:
-    path: "{{ item }}/.bashrc"
-    block: |
-      {{ iserver_bashrc_debian }}
+      {{ iserver_deb_user_profile }}
     marker: "# {mark} ANSIBLE MANAGED BLOCK"
   loop: "{{ iserver_users_dirs }}"
+
+- name: Add a block of bashrc config to the root user (Debian).
+  blockinfile:
+    path: "/root/.bashrc"
+    block: |
+      {{ iserver_bashrc_root_debian }}
+    marker: "# {mark} ANSIBLE MANAGED BLOCK"
   when: ansible_distribution == 'Debian'
 
-- name: Add a block of bashrc config to root and the default user (Ubuntu).
+- name: Add a block of bashrc config to the default user (Debian).
   blockinfile:
-    path: "{{ item }}/.bashrc"
+    path: "/home/{{ iserver_user }}/.bashrc"
     block: |
-      {{ iserver_bashrc_ubuntu }}
+      {{ iserver_bashrc_user_debian }}
     marker: "# {mark} ANSIBLE MANAGED BLOCK"
-  loop: "{{ iserver_users_dirs }}"
+  when: ansible_distribution == 'Debian'
+
+- name: Add a block of bashrc config to the root user (Ubuntu).
+  blockinfile:
+    path: "/root/.bashrc"
+    block: |
+      {{ iserver_bashrc_root_ubuntu }}
+    marker: "# {mark} ANSIBLE MANAGED BLOCK"
   when: ansible_distribution == 'Ubuntu'
 
-- name: Customize default user bashrc - prompt is blue.
-  lineinfile:
-    path: /home/{{ iserver_user }}/.bashrc
-    line: 'export PS1="\[\033[1;34m\][\u@\h:\w]$\[\033[0m\] "'
-
-- name: Customize root bashrc - prompt is red.
-  lineinfile:
-    path: /root/.bashrc
-    line: 'export PS1="\[\033[1;31m\][\u@\h:\w]#\[\033[0m\] "'
+- name: Add a block of bashrc config to the default user (Ubuntu).
+  blockinfile:
+    path: "/home/{{ iserver_user }}/.bashrc"
+    block: |
+      {{ iserver_bashrc_user_ubuntu }}
+    marker: "# {mark} ANSIBLE MANAGED BLOCK"
+  when: ansible_distribution == 'Ubuntu'
