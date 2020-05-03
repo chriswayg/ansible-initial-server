@@ -119,8 +119,6 @@
       value: "no"
     - key:   "ChallengeResponseAuthentication"
       value: "no"
-    - key:   "UsePAM"
-      value: "yes"
     - key:   "UseDNS"
       value: "no"
     - key:   "Banner"
