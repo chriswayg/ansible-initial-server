@@ -1,7 +1,5 @@
 ### CLEANUP ###
 
-# TODO adapt to and test with OpenBSD
-
 - name: Copy the cleanup script.
   template:
     src: template-cleanup-alpine.sh.j2
