@@ -14,7 +14,6 @@
     create: yes
     block: |
       if [ -x /usr/local/bin/ssh-host-keygen.sh ]; then
-        echo "Refreshing SSH host keys (once)"
         /usr/local/bin/ssh-host-keygen.sh
       fi
     marker: "# {mark} ANSIBLE MANAGED BLOCK"
