@@ -1,8 +1,8 @@
 # GROW PARTITION
 
-# TODO adapt to and test with OpenBSD
+## TODO adapt to and test with OpenBSD
+## There seem to be no cloud-utils or growpart for OpenBSD
 
-# # There seems to be no cloud-utils or growpart for OpenBSD
 # - name: Ensure that prerequisites are installed.
 #   openbsd_pkg:
 #     name: "{{ packages }}"
