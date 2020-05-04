@@ -43,6 +43,5 @@
 - name: Apply Network Settings
   command: sh /etc/netstart
   become: true
-  become_method: doas
   tags:
     - vanilla
