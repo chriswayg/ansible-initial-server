@@ -170,12 +170,12 @@
       - never
       - is_template
 
-  # or use '*'
-  - name: Prevent password authentication for root.
-    user:
-      name: root
-      password: '!'
-    tags:
-      - vanilla
+  # # or use '*'
+  # - name: Prevent password authentication for root.
+  #   user:
+  #     name: root
+  #     password: '!'
+  #   tags:
+  #     - vanilla
   ## End of block MAIN
   become: true
