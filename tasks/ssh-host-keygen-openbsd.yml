@@ -11,6 +11,7 @@
 - name: Enable the ssh-host-keygen to autostart.
   blockinfile:
     path: "/etc/rc.local"
+    create: yes
     block: |
       if [ -x /usr/local/bin/ssh-host-keygen.sh ]; then
         echo "Refreshing SSH host keys (once)"
