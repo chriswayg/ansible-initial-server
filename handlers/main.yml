@@ -3,7 +3,7 @@
 
 # Alpine
 # Ensure that local auto-start service is enabled
-# Used to start ssh-host-keygen.sh on first boot and the auto-growpart script
+# - used to start ssh-host-keygen.sh on first boot and the auto-growpart script
 - name: Activate Autostart
   service:
     name: local
@@ -16,6 +16,7 @@
   service:
     name: sshd
     state: restarted
+  become: true
   tags:
     - vanilla
 
@@ -24,6 +25,7 @@
   service:
     name: ssh
     state: restarted
+  become: true
   tags:
     - vanilla
 
@@ -32,6 +34,15 @@
   service:
     name: systemd-logind
     state: restarted
+  become: true
   tags:
     - vanilla
     - travis
+
+# OpenBSD
+- name: Apply Network Settings
+  command: sh /etc/netstart
+  become: true
+  become_method: doas
+  tags:
+    - vanilla
