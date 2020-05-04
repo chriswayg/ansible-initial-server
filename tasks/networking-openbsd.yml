@@ -2,23 +2,46 @@
 
 ## TODO: Test networking; Add a route via main host IP
 # - Add a route via {{ iserver_host_main_ip }}
-# - use handler for apply_network_config
+# - check:
+#   cat /etc/hostname.vio0
+#   cat /etc/mygate
+#   cat /etc/resolv.conf
+#   ifconfig
+#   netstat -rn
+#   sh /etc/netstart
 # - test in Proxmox
 
-- name: Set fixed IP address.
-  template:
-    src: hostname.{{ iserver_obsd_interface }}.j2
+- name: Ensure that DHCP is configured.
+  copy:
+    src: hostname-openbsd-dhcp
     dest: /etc/hostname.{{ iserver_obsd_interface }}
-  register: apply_network_config
-  when: set_fixed_IP
-  tags:
-    - vanilla
+  notify:
+    - Apply Network Settings
+  when: not set_fixed_IP
 
-- name: Set fixed IP gateway.
+- name: Ensure that DNS nameservers are configured.
+  lineinfile:
+    path: /etc/resolv.conf
+    state: present
+    regexp: '^nameserver \s'
+    line:   'nameserver {{ item }}'
+  with_items: "{{ iserver_nameservers }}"
+  notify:
+    - Apply Network Settings
+  when: set_fixed_IP
+
+- name: Ensure that static IP is configured.
+  template:
+    src: hostname-openbsd.j2
+    dest: /etc/hostname.{{ iserver_obsd_interface }}
+  notify:
+    - Apply Network Settings
+  when: set_fixed_IP
+
+- name: Ensure that static IP gateway is configured.
   template:
     src: mygate-openbsd.j2
     dest: /etc/mygate
-  register: apply_network_config
+  notify:
+    - Apply Network Settings
   when: set_fixed_IP
-  tags:
-    - vanilla
