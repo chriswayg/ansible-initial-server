@@ -27,7 +27,6 @@
     changed_when: false
     register: user_exists
 
-  # TODO check that this is working
   - name: Add the default user with passwordless doas.
     template:
       src: doas.conf.j2
@@ -134,13 +133,12 @@
       dest: "{{ iserver_ssh_banner }}"
     when: iserver_ssh_banner != "none"
 
-  # TODO Create New SSH host keys on first boot
-  # - name: New SSH host keys on first boot.
-  #   import_tasks: ssh-host-keygen-openbsd.yml
-  # only run when is_template tag is specifically requested
-  # tags:
-  #   - never
-  #   - is_template
+  - name: New SSH host keys on first boot.
+    import_tasks: ssh-host-keygen-openbsd.yml
+    # only run when is_template tag is specifically requested
+    tags:
+      - never
+      - is_template
 
   ### CUSTOMIZE ###
   - name: Timezone.
