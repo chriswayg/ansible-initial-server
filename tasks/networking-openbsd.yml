@@ -1,6 +1,6 @@
 ### NETWORKING ###
 
-## TODO: Test networking; Add a route via main host IP
+## TODO: Test static IP, possibly a route via main host IP?
 # - Add a route via {{ iserver_host_main_ip }}
 # - check:
 #   cat /etc/hostname.vio0
