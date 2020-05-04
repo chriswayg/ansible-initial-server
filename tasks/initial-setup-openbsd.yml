@@ -181,4 +181,3 @@
   #     - vanilla
   ## End of block MAIN
   become: true
-  become_method: doas
