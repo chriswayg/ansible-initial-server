@@ -1,16 +1,24 @@
 # SSH-HOST-KEYGEN (for KVM template)
 
-# TODO adapt to and test with OpenBSD
-
+# TODO test with OpenBSD
 - name: Copy script for OpenSSH Server Key Generation.
   copy:
     src: ssh-host-keygen.sh
-    dest: /etc/local.d/02_ssh-host-keygen.start
+    dest: /usr/local/bin/ssh-host-keygen.sh
     mode: a+x
   register: enable_ssh_host_keygen
-  notify: Activate Autostart
 
-- name: Create a file so that ssh-host-keygen.service will run once.
+- name: Enable the ssh-host-keygen to autostart.
+  blockinfile:
+    path: "/etc/rc.local"
+    block: |
+      if [ -x /usr/local/bin/ssh-host-keygen.sh ]; then
+        echo "Refreshing SSH host keys (once)"
+        /usr/local/bin/ssh-host-keygen.sh
+      fi
+    marker: "# {mark} ANSIBLE MANAGED BLOCK"
+
+- name: Create a file so that ssh-host-keygen will run once.
   file:
     path: /etc/run-ssh-host-keygen-once
     state: touch
