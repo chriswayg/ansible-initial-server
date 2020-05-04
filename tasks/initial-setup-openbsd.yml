@@ -39,14 +39,14 @@
   tags:
     - vanilla
 
+- name: Reset SSH connection to allow user changes to affect 'current login user'.
+  meta: reset_connection
+  tags:
+    - vanilla
+
 ## Now that the default user can do passwordless doas, run the rest with doas.
 - name: MAIN
   block:
-  - name: Reset SSH connection to allow user changes to affect 'current login user'.
-    meta: reset_connection
-    tags:
-      - vanilla
-
   ### BASE PACKAGES ###
   - name: Base Packages - OpenBSD
     import_tasks: packages-openbsd.yml
