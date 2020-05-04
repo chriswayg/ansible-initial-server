@@ -8,7 +8,7 @@ network:
     {{ iserver_interface }}:
       dhcp4: no
       dhcp6: no
-      addresses: [{{ iserver_ip }}/32]
+      addresses: [{{ iserver_ip }}{{ iserver_netmask }}]
       routes:
       - to: 0.0.0.0/0
         via: {{ iserver_host_main_ip }}

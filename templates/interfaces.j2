@@ -5,8 +5,7 @@
 auto {{ iserver_interface }}
 iface {{ iserver_interface }} inet static
     # Additional IP used by VM
-    address {{ iserver_ip }}
-    netmask 255.255.255.255
+    address {{ iserver_ip }}{{ iserver_netmask }}
     # The Proxmox Main IP as gateway
     pointopoint {{ iserver_host_main_ip }}
     gateway {{ iserver_host_main_ip }}

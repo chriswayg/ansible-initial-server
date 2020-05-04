@@ -5,7 +5,7 @@ iserver_is_a_vm: True
 # use the name of the default user which was used during installation
 # this Ansible role is not intended to add or change a default user
 iserver_user: deploy
-iserver_become: sudo ## do not chanage this ##
+iserver_become: sudo ## do not chanage this (use doas for OpenBSD) ##
 iserver_lock_root: False
 
 ### BASE PACKAGES ###
@@ -101,6 +101,8 @@ iserver_host_main_ip: 127.1.1.1
 # - or use a fixed routed external IP for servers
 # - which will also go into and 'interfaces' or 'netplan'
 iserver_ip: 127.0.1.1
+# use slash notation /24 for 255.255.255.0 or /32 for 255.255.255.255
+iserver_netmask: "/32"
 iserver_nameservers: 1.1.1.1,1.0.0.1
 
 ### SSH ###
@@ -153,6 +155,8 @@ iserver_obsd_root_profile: |
   alias ls='colorls -G'
   EDITOR=/usr/local/bin/nano
   export EDITOR
+  HISTFILE="$HOME/.ksh_history"
+  HISTSIZE=5000
 
 iserver_obsd_user_profile: |
   PS1='\[\033[1;34m\][\u@\h:\w]$\[\033[0m\] '
@@ -162,6 +166,8 @@ iserver_obsd_user_profile: |
   alias ls='colorls -G'
   EDITOR=/usr/local/bin/nano
   export EDITOR
+  HISTFILE="$HOME/.ksh_history"
+  HISTSIZE=5000
 
 # Alpine profiles
 iserver_alpine_root_profile: |
