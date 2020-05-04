@@ -7,7 +7,7 @@
 
 # This does not update the motd with a new os-release after initial creation.
 - name: Create the file which will show a welcome motd after login.
-  command: source /etc/os-release && printf "\n $PRETTY_NAME ($VERSION_ID) Server\n\n" > /etc/motd
+  command: printf "\n  Welcome to $(dmesg | head -1 | cut -d' ' -f1,2) Server\n\n" > /etc/motd
   args:
     creates: /etc/motd
 
