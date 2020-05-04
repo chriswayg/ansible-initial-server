@@ -1,6 +1,6 @@
 # GROW PARTITION
 
-## TODO adapt to and test with OpenBSD
+## TODO find a replacement for growpart in OpenBSD
 ## There seem to be no cloud-utils or growpart for OpenBSD
 
 # - name: Ensure that prerequisites are installed.
