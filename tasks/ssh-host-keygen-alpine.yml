@@ -3,19 +3,14 @@
 
 - name: Copy script for OpenSSH Server Key Generation.
   copy:
-    src: ssh-host-keygen.sh
+    src: ssh-host-keygen.start
     dest: /etc/local.d/02_ssh-host-keygen.start
     mode: a+x
   register: enable_ssh_host_keygen
+  notify:
+    - Activate Autostart
 
-- name: Ensure that local auto-start service is enabled executing ssh-host-keygen.sh on first boot.
-  service:
-    name: local
-    runlevel: default
-    enabled: yes
-  when: enable_ssh_host_keygen is changed
-
-- name: Create a file so that ssh-host-keygen.service will run once.
+- name: Create a file so that ssh-host-keygen will run once.
   file:
     path: /etc/run-ssh-host-keygen-once
     state: touch
