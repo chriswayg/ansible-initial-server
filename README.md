@@ -24,6 +24,13 @@ Use with a default install of **Ubuntu 18.04** server ISO
 - Partitions: 1 primary ext4 root partition /dev/sda1 (no swap); Grub on MBR
 - an auto-install 'preseed.cfg' file can be used to speed-up the initial install
 
+Use with a default install of **Ubuntu 20.04** server ISO
+- installed from ubuntu-20.04.x-legacy-server-amd64.iso (not live-server!)
+- Software: Standard System Utilities and SSH Server (Standard and Server in Ubuntu)
+- Default user `deploy` (customizable)
+- Partitions: 1 primary ext4 root partition /dev/sda1 (no swap); Grub on MBR
+- an auto-install 'preseed.cfg' file can be used to speed-up the initial install
+
 Use with a default install of **OpenBSD 6.x** server ISO
 - installed from install6x.iso
 - installed with all file sets (or drop optional -comp* -game* -x*)
@@ -31,16 +38,15 @@ Use with a default install of **OpenBSD 6.x** server ISO
 - an auto-install 'install.conf' file can be used to speed-up the initial install
 
 Use with a default install of **Alpine 3.x** server ISO
-- installed from alpine-virt-3.11.x-x86_64.iso
+- installed from alpine-virt-3.x.y-x86_64.iso
 - an auto-install 'answers' file can be used to speed-up the initial install
-
 
 ### Configuration features - Debian/Ubuntu
 - qemu-guest-agent for Packer SSH and in Proxmox for shutdown and backups
 - haveged random number generator to speed up boot
 - passwordless sudo for default user 'deploy' (name can be changed)
 - SSH public key installed for default user with only key login permitted
-- no login for root
+- no login for root (optional)
 - display IP and SSH fingerprint before console login
 - serial console
 - generates new SSH host keys on first boot to avoid duplicates in cloned VMs
@@ -48,10 +54,21 @@ Use with a default install of **Alpine 3.x** server ISO
 - optional SSH warning banner
 - optional Verse of the Day displayed on motd
 
+### Configuration features - Alpine
+- qemu-guest-agent for Packer SSH and in Proxmox for shutdown and backups
+- passwordless sudo for default user 'deploy' (name can be changed)
+- SSH public key installed for default user with only key login permitted
+- no login for root (optional)
+- display IP and SSH fingerprint before console login
+- serial console
+- generates new SSH host keys on first boot to avoid duplicates in cloned VMs
+- automatically grow partition after resizing VM disk
+- optional SSH warning banner
+
 ### Configuration features - OpenBSD
 - passwordless doas for default user 'deploy' (name can be changed)
 - SSH public key installed for default user with only key login permitted
-- no login for root
+- no login for root (optional)
 - serial console
 - generates new SSH host keys on first boot to avoid duplicates in cloned VMs
 - optional SSH warning banner
@@ -66,7 +83,7 @@ Running the role with the `vanilla` tag will only make minimal modifications to 
 - set hostname and /etc/hosts
 - set timezone
 - no customization to motd, bashrc, etc.
-- does not disable Ubuntu swapfile
+- will not disable Ubuntu swapfile
 - will not automatically grow partition after resizing VM disk
 - check tasks/main.yml and other task files to see what else is excluded
 
@@ -74,7 +91,7 @@ Running the role with the `vanilla` tag will only make minimal modifications to 
 - check networking, that the VM is reachable via SSH
 
 Important Role Variables
---------------
+------------------------
 `iserver_user`
 - Username of the default user
 
@@ -88,6 +105,31 @@ Important Role Variables
 
 `iserver_sshkey`
 - SSH-key of the default user
+
+Important Flags
+---------------
+`iserver_is_a_vm`
+- set to False when using the role on bare metal server
+
+`iserver_lock_root`
+- set to True in order to disallow root login even on console
+
+`set_fixed_IP`
+- set to True if configuring a static IP
+
+`iserver_verse_enabled`
+- show a Verse of the Day on motd
+
+Tags
+----
+`vanilla`
+- only make minimal modifications
+
+`is_template`
+- include additional tasks useful for Proxmox templates
+
+`travis`
+- these tasks will be skipped in Travis testing
 
 Example Playbook
 ----------------
