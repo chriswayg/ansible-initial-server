@@ -1,5 +1,6 @@
 ansible-initial-server
 ======================
+[![Build Status](https://travis-ci.org/chriswayg/ansible-initial-server.svg?branch=master)](https://travis-ci.org/chriswayg/ansible-initial-server)
 
 Initial configuration of a freshly installed Debian/Ubuntu or OpenBSD server to be used as a template in KVM.
 
