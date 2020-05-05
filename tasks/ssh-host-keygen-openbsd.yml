@@ -16,7 +16,7 @@
       if [ -x /usr/local/bin/ssh-host-keygen.sh ]; then
         /usr/local/bin/ssh-host-keygen.sh
       fi
-    marker: "# {mark} ANSIBLE MANAGED BLOCK"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - KEY"
 
 - name: Create a file so that ssh-host-keygen will run once.
   file:

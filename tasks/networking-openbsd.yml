@@ -11,6 +11,22 @@
 #   sh /etc/netstart
 # - test in Proxmox
 
+- name: Copy script which will display IP before login.
+  template:
+    src: show-ip-address-openbsd.j2
+    dest: /usr/local/bin/show-ip-address.sh
+    mode: a+x
+
+- name: Enable the show-ip-address script to autostart.
+  blockinfile:
+    path: "/etc/rc.local"
+    create: yes
+    block: |
+      if [ -x /usr/local/bin/ssh-host-keygen.sh ]; then
+        /usr/local/bin/show-ip-address.sh
+      fi
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - IP"
+
 - name: Ensure that DHCP is configured.
   copy:
     src: hostname-openbsd-dhcp
