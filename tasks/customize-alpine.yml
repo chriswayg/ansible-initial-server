@@ -12,10 +12,10 @@
   args:
     creates: /etc/motd
 
-# TODO a more dynamic motd
+# TODO show a more dynamic motd
 # - name: Copy the file which will show a welcome motd after login.
 #   template:
-#     src: motd-welcome.j2
+#     src: motd-welcome-alpine.j2
 #     dest: /etc/motd
 #     mode: a+x
 
