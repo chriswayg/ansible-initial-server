@@ -110,6 +110,12 @@
     tags:
       - vanilla
 
+  # Needed when running in Travis to validate sshd_config.
+  - name: Ensure that SSH service is started.
+    service:
+      name: ssh
+      state: started
+
   #'UseDNS no' avoids login delays when the remote client's DNS cannot be resolved
   - name: Apply SSHD configuration.
     lineinfile:
