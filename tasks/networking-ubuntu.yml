@@ -3,7 +3,7 @@
 
 - name: Copy Ubuntu script which will run when the network comes up to display IP before login.
   template:
-    src: 99-show-ip-address.j2
+    src: show-ip-address-ubuntu.j2
     dest: /etc/networkd-dispatcher/routable.d/99-show-ip-address
     mode: a+x
 
@@ -18,7 +18,7 @@
 
   - name: Set fixed IP via Netplan.
     template:
-      src: 01-static-routed-ip.yaml.j2
+      src: static-routed-ip-ubuntu.yaml.j2
       dest: /etc/netplan/01-static-routed-ip.yaml
     register: netplan_generate_config
 

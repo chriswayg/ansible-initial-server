@@ -10,7 +10,7 @@
 # TODO test Set fixed IP via network/interfaces in Alpine
 - name: Set fixed IP via network/interfaces.
   template:
-    src: interfaces.j2
+    src: network-interfaces.j2
     dest: /etc/network/interfaces
   when: set_fixed_IP | bool
   tags:

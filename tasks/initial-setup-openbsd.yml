@@ -15,12 +15,7 @@
   #     name: "{{ iserver_user }}"
   #     group: "{{ iserver_user }}"
   #     password: '*'
-  #
-  # - name: Add the default user with passwordless doas.
-  #   template:
-  #     src: doas.conf.j2
-  #     dest: /etc/doas.conf
-  #     mode: 0440
+  
   - name: Check if iserver_user exists.
     shell: id -u "{{ iserver_user }}" > /dev/null 2>&1
     ignore_errors: True

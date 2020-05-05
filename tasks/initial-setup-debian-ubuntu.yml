@@ -26,7 +26,7 @@
 
   - name: Add the default user with passwordless sudo to sodoers.d
     template:
-      src: default-user.j2
+      src: sudo-default-user.j2
       dest: /etc/sudoers.d/default-user
       mode: 0440
 
