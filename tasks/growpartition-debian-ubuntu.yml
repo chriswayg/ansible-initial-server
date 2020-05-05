@@ -8,14 +8,14 @@
 
 - name: Copy systemd unitfile to automatically Grow Partition after resize by Proxmox.
   copy:
-    src: autogrowpart.service
+    src: autogrowpart-debian-ubuntu.service
     dest: /etc/systemd/system/autogrowpart.service
     mode: 0644
   register: enable_autogrowpart
 
 - name: Copy script to automatically Grow Partition after resize by Proxmox.
   copy:
-    src: auto_grow_partition.sh
+    src: auto_grow_partition-debian-ubuntu.sh
     dest: /usr/local/bin/auto_grow_partition.sh
     mode: a+x
 

@@ -13,6 +13,6 @@
 
 # - name: Copy script to automatically Grow Partition after resize by Proxmox.
 #   copy:
-#     src: auto_grow_partition.sh
+#     src: auto_grow_partition-openbsd.sh
 #     dest: /usr/local/bin/auto_grow_partition.sh
 #     mode: a+x

@@ -3,7 +3,7 @@
 
 - name: Copy systemd unitfile for OpenSSH Server Key Generation.
   copy:
-    src: ssh-host-keygen.service
+    src: ssh-host-keygen-debian-ubuntu.service
     dest: /etc/systemd/system/ssh-host-keygen.service
     mode: 0644
   register: enable_ssh_host_keygen

@@ -3,7 +3,7 @@
 
 - name: Copy script for OpenSSH Server Key Generation.
   copy:
-    src: ssh-host-keygen.start
+    src: ssh-host-keygen-alpine.start
     dest: /etc/local.d/02_ssh-host-keygen.start
     mode: a+x
   register: enable_ssh_host_keygen

@@ -14,7 +14,7 @@
 
 - name: Copy script to automatically Grow Partition after resize by Proxmox.
   copy:
-    src: auto_grow_partition.start
+    src: auto_grow_partition-alpine.start
     dest: /etc/local.d/05_auto_grow_partition.start
     mode: a+x
   notify: Activate Autostart

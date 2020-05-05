@@ -26,7 +26,7 @@
 # so that Ubuntu will not complain about missing sources.list
 - name: Ensure that there is a sources.list file.
   copy:
-    src: sources.list
+    src: sources-debian-ubuntu.list
     dest: /etc/apt/sources.list
     force: no
 

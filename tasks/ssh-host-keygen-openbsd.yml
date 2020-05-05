@@ -3,7 +3,7 @@
 # TODO test with OpenBSD
 - name: Copy script for OpenSSH Server Key Generation.
   copy:
-    src: ssh-host-keygen.sh
+    src: ssh-host-keygen-openbsd.sh
     dest: /usr/local/bin/ssh-host-keygen.sh
     mode: a+x
   register: enable_ssh_host_keygen
