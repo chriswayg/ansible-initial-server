@@ -1,7 +1,6 @@
 ### BASE PACKAGES ###
 # Alpine
 
-# replaces sources.list repos.
 - name: Move original /etc/apk/repositories to back it up (once).
   command: mv /etc/apk/repositories /etc/apk/repositories.original
   args:
