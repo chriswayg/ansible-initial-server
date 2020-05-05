@@ -7,16 +7,16 @@
     creates: /etc/motd.original
   when: ansible_distribution == 'Debian'
 
+- name: Copy the file which will show a welcome motd after login.
+  template:
+    src: motd-welcome-debian-ubuntu.j2
+    dest: /etc/update-motd.d/15-motd-welcome
+    mode: a+x
+
 - name: Copy a motd ascii image file.
   copy:
     src: motd-image
     dest: /etc/motd-image
-
-- name: Copy the file which will show a welcome motd after login.
-  template:
-    src: motd-welcome.j2
-    dest: /etc/update-motd.d/15-motd-welcome
-    mode: a+x
 
 - name: Ensure that verse is installed.
   apt:
@@ -26,7 +26,7 @@
 
 - name: Copy the file which will show a verse and disk space via motd.
   template:
-    src: motd-verse.j2
+    src: motd-verse-debian-ubuntu.j2
     dest: /etc/update-motd.d/85-motd-verse
     mode: a+x
   when: iserver_verse_enabled
@@ -68,13 +68,19 @@
     dest: /etc/legal
   when: ansible_distribution == 'Ubuntu'
 
-- name: Add a block of commands to the root and the default user profile.
+- name: Add a block of commands to the root user profile.
   blockinfile:
-    path: "{{ item }}/.profile"
+    path: "/root/.profile"
     block: |
       {{ iserver_deb_user_profile }}
     marker: "# {mark} ANSIBLE MANAGED BLOCK"
-  loop: "{{ iserver_users_dirs }}"
+
+- name: Add a block of commands to the default user profile.
+  blockinfile:
+    path: "/home/{{ iserver_user }}/.profile"
+    block: |
+      {{ iserver_deb_user_profile }}
+    marker: "# {mark} ANSIBLE MANAGED BLOCK"
 
 - name: Add a block of bashrc config to the root user (Debian).
   blockinfile:

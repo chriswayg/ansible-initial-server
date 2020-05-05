@@ -1,5 +1,6 @@
 ---
 # defaults file for ansible-initial-server
+
 iserver_is_a_vm: True
 ### SUDOERS ###
 # use the name of the default user which was used during installation
@@ -114,30 +115,25 @@ iserver_ssh_banner: none # or /etc/ssh/issue.net
 ### CUSTOMIZE ###
 iserver_timezone: UTC
 
-# blocks added to profile/bashrc in these dirs:
-iserver_users_dirs:
-  - /root
-  - /home/{{ iserver_user }}
-
 # Added to profile in iserver_users_dirs (Debian, Ubuntu)
 iserver_deb_user_profile: |
   EDITOR=/usr/local/bin/nano
 
 iserver_bashrc_root_debian: |
+  export PS1="\[\033[1;31m\][\u@\h:\w]#\[\033[0m\] "
   export LS_OPTIONS='--color=auto'
   eval "`dircolors`"
   alias ls='ls $LS_OPTIONS'
   alias ll='ls $LS_OPTIONS -l'
   alias l='ls $LS_OPTIONS -lA'
-  export PS1="\[\033[1;31m\][\u@\h:\w]#\[\033[0m\] "
 
 iserver_bashrc_user_debian: |
+  export PS1="\[\033[1;34m\][\u@\h:\w]$\[\033[0m\] "
   export LS_OPTIONS='--color=auto'
   eval "`dircolors`"
   alias ls='ls $LS_OPTIONS'
   alias ll='ls $LS_OPTIONS -l'
   alias l='ls $LS_OPTIONS -lA'
-  export PS1="\[\033[1;34m\][\u@\h:\w]$\[\033[0m\] "
 
 # Ubuntu dircolors are already activated
 iserver_bashrc_root_ubuntu: |
