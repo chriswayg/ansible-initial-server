@@ -9,7 +9,7 @@
   import_tasks: initial-setup-debian-ubuntu.yml
   when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
   tags:
-    - deblike
+    - debuntu
 
 - name: Initial Setup - OpenBSD.
   import_tasks: initial-setup-openbsd.yml
