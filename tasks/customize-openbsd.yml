@@ -1,4 +1,5 @@
 ### CUSTOMIZE ###
+# OpenBSD
 
 - name: Move the original /etc/motd to back it up (once).
   command: mv /etc/motd /etc/motd.original

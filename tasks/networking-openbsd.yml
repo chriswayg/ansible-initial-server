@@ -1,4 +1,5 @@
 ### NETWORKING ###
+# OpenBSD
 
 ## TODO: Test static IP, possibly a route via main host IP?
 # - Add a route via {{ iserver_host_main_ip }}

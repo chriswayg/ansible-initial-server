@@ -1,4 +1,5 @@
 ### CLEANUP ###
+# OpenBSD
 
 - name: Copy the cleanup script.
   template:

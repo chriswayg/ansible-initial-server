@@ -1,4 +1,5 @@
 # SSH-HOST-KEYGEN (for KVM template)
+# OpenBSD
 
 # TODO test with OpenBSD
 - name: Copy script for OpenSSH Server Key Generation.

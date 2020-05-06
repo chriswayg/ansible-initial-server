@@ -1,4 +1,5 @@
 # SERIAL CONSOLE
+# OpenBSD
 
 - name: Configure the boot process to use the serial port as a console.
   copy:

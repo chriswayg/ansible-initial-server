@@ -1,4 +1,5 @@
 ### BASE PACKAGES ###
+# OpenBSD
 
 - name: Update all packages on the system
   openbsd_pkg:
