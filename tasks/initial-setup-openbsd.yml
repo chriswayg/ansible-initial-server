@@ -1,17 +1,6 @@
 ### Initial Setup ###
 # OpenBSD
 
-- name: Prepare OpenBSD for Ansible.
-  gather_facts: False
-  tasks:
-    - name: Ensure, that python is installed.
-      raw: pkg_add -z python-2.7
-      when: iserver_bootstrap_python
-
-    - name: Ensure, that python is linked to /usr/bin/python.
-      raw: ln -sf /usr/local/bin/python2.7 /usr/bin/python
-      when: iserver_bootstrap_python
-
 - name: KICKSTART - OpenBSD.
   block:
   ### SUDOERS ###

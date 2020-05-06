@@ -9,7 +9,6 @@ iserver_user: deploy
 iserver_become: sudo ## do not chanage this (use doas for OpenBSD) ##
 iserver_kickstart_become: "{{ iserver_become }}"
 iserver_lock_root: False
-iserver_bootstrap_python: False
 
 ### BASE PACKAGES ###
 iserver_debian_repos:
