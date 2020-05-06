@@ -2,7 +2,7 @@
 # Debian
 
 # Note: run-parts doesn't run scripts with a .sh extension
-- name: Copy Debian script which will run when the network comes up to display IP before login.
+- name: Copy script that runs when the network comes up to display IP and SSH fingerprint before login.
   template:
     src: show-ip-address-debian.j2
     dest: /etc/network/if-up.d/show-ip-address

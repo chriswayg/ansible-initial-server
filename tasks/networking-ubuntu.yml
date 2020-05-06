@@ -1,7 +1,7 @@
 ### NETWORKING ###
 # Ubuntu
 
-- name: Copy Ubuntu script which will run when the network comes up to display IP before login.
+- name: Copy script that runs when the network comes up to display IP and SSH fingerprint before login.
   template:
     src: show-ip-address-ubuntu.j2
     dest: /etc/networkd-dispatcher/routable.d/99-show-ip-address

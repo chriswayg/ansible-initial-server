@@ -12,7 +12,7 @@
 #   sh /etc/netstart
 # - test in Proxmox
 
-- name: Copy script which will display IP before login.
+- name: Copy script which will display IP and SSH fingerprint before login.
   template:
     src: show-ip-address-openbsd.j2
     dest: /usr/local/bin/show-ip-address.sh
@@ -24,6 +24,7 @@
     create: yes
     block: |
       if [ -x /usr/local/bin/ssh-host-keygen.sh ]; then
+        echo "Updating display of IP and SSH fingerprint"
         /usr/local/bin/show-ip-address.sh
       fi
     marker: "# {mark} ANSIBLE MANAGED BLOCK - IP"
