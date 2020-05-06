@@ -70,6 +70,7 @@ iserver_deb_packages:
   # - screen
 
 # packages to install on every OpenBSD server
+# qemu-guest-agent is not funtional on OpenBSD (see notes.md)
 iserver_obsd_packages:
   - colorls # used by .profile
   - nano    # set as default editor in .profile
