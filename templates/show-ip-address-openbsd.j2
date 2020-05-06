@@ -2,7 +2,19 @@
 # {{ ansible_managed }}
 # OpenBSD
 
-cp /etc/issue.original /etc/issue
-sed -i '1s;^; \n;' /etc/issue
-printf "ECDSA key fingerprint:\n$(ssh-keygen -l -f /etc/ssh/ssh_host_ecdsa_key.pub)\n" >> /etc/issue
-printf "\nSSH user: {{ iserver_user }}     IP: $(ifconfig {{ iserver_obsd_interface }} | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p')\n\n" >> /etc/issue
+## Because OpenBSD does not use /etc/issue we have to modify the /etc/gettytab instaed
+
+## Original gettytab line: (with 8 spaces indentation)
+# :np:im=\r\n%s/%m (%h) (%t)\r\n\r\n:sp#1200:
+## restore original
+# sed -i 's/:np:im=.*/:np:im=\\r\\n%s\/%m (%h) (%t)\\r\\n\\r\\n:sp#1200:/' /etc/gettytab
+
+# remove the colon ':' using sed which does not work in gettytab
+fingerprint=$(ssh-keygen -l -f /etc/ssh/ssh_host_ecdsa_key.pub | awk '/256 / { print $2 }' | sed 's/SHA256:/SHA256 /')
+ipaddress=$(ifconfig {{ iserver_obsd_interface }} | awk '/inet / { print $2 }')
+
+# escaped forward-slash '/' for sed, multiple escaped backslashes '\': once for double-quotes, again for sed
+sed -i "s/:np:im=.*/:np:im=\\\r\\\n%s\/%m (%h) (%t)\\\r\\\n\\\r\\\nECDSA key fingerprint  $fingerprint\\\r\\\n\\\r\\\nSSH user  {{ iserver_user }}    IP  $ipaddress\\\r\\\n\\\r\\\n:sp#1200:/" /etc/gettytab
+
+## resulting line should look similar to this in /etc/gettytab:
+# :np:im=\r\n%s/%m (%h) (%t)\r\n\r\nECDSA key fingerprint  SHA256 eegsh70oiZmpr1lxzeMAdMEnoLV8C5rnWJ9zLEizWhs\r\n\r\nSSH user  deploy    IP  10.10.10.69\r\n\r\n:sp#1200:
