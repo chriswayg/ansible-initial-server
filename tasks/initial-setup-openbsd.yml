@@ -69,8 +69,6 @@
 
   - name: Ensure that DHCP or static IP is configured.
     import_tasks: networking-openbsd.yml
-    tags:
-      - vanilla
 
   - name: Copy original hosts file to back it up (once).
     command: cp /etc/hosts /etc/hosts.original
@@ -89,7 +87,7 @@
       - vanilla
 
   ### SSH ###
-  - name: Ensure, that the default user has a SSH authorized key.
+  - name: Ensure that the default user has a SSH authorized key.
     authorized_key:
       user: "{{ iserver_user }}"
       state: present
@@ -156,6 +154,7 @@
 
   - name: Patch OpenBSD with latest fixes.
     command: syspatch
+    changed_when: false
     tags:
       - vanilla
 
@@ -178,3 +177,4 @@
 
   # End of block MAIN
   become: true
+  become_method: "{{ iserver_become }}"
