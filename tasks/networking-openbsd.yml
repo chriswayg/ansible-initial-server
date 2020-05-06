@@ -24,7 +24,7 @@
     create: yes
     block: |
       if [ -x /usr/local/bin/ssh-host-keygen.sh ]; then
-        echo "Updating display of IP and SSH fingerprint"
+        echo "updating display of IP and SSH fingerprint."
         /usr/local/bin/show-ip-address.sh
       fi
     marker: "# {mark} ANSIBLE MANAGED BLOCK - IP"
