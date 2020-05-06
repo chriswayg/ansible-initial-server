@@ -10,6 +10,9 @@
     runlevel: default
     enabled: yes
   become: true
+  become_method: "{{ iserver_become }}"
+  tags:
+    - vanilla
 
 # Alpine, OpenBSD
 - name: Restart SSHD
@@ -17,6 +20,7 @@
     name: sshd
     state: restarted
   become: true
+  become_method: "{{ iserver_become }}"
   tags:
     - vanilla
 
@@ -26,6 +30,7 @@
     name: ssh
     state: restarted
   become: true
+  become_method: "{{ iserver_become }}"
   tags:
     - vanilla
 
@@ -35,6 +40,7 @@
     name: systemd-logind
     state: restarted
   become: true
+  become_method: "{{ iserver_become }}"
   tags:
     - vanilla
     - travis
@@ -43,5 +49,6 @@
 - name: Apply Network Settings
   command: sh /etc/netstart
   become: true
+  become_method: "{{ iserver_become }}"
   tags:
     - vanilla
