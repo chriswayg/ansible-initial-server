@@ -69,6 +69,7 @@ Use with a default install of **Alpine 3.x** server ISO
 - passwordless doas for default user 'deploy' (name can be changed)
 - SSH public key installed for default user with only key login permitted
 - no login for root (optional)
+- display IP and SSH fingerprint before console login
 - serial console
 - generates new SSH host keys on first boot to avoid duplicates in cloned VMs
 - optional SSH warning banner
@@ -84,6 +85,7 @@ Running the role with the `vanilla` tag will only make minimal modifications to 
 - set timezone
 - no customization to motd, bashrc, etc.
 - will not disable Ubuntu swapfile
+- will not display IP and SSH fingerprint before console login
 - will not automatically grow partition after resizing VM disk
 - check tasks/main.yml and other task files to see what else is excluded
 
@@ -130,6 +132,11 @@ Tags
 
 `travis`
 - these tasks will be skipped in Travis testing
+
+Check which tasks are going to be executed (example)
+```
+ansible-playbook -v server-template.yml --tags "vanilla,is_template" --skip-tags "openbsd,alpine" --list-tasks
+```
 
 Example Playbook
 ----------------
