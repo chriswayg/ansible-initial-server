@@ -34,6 +34,8 @@
   notify:
     - Apply Network Settings
   when: not set_fixed_IP
+  tags:
+    - vanilla
 
 - name: Ensure that DNS nameservers are configured.
   lineinfile:
@@ -45,6 +47,8 @@
   notify:
     - Apply Network Settings
   when: set_fixed_IP
+  tags:
+    - vanilla
 
 - name: Ensure that static IP is configured.
   template:
@@ -53,6 +57,8 @@
   notify:
     - Apply Network Settings
   when: set_fixed_IP
+  tags:
+    - vanilla
 
 - name: Ensure that static IP gateway is configured.
   template:
@@ -61,3 +67,5 @@
   notify:
     - Apply Network Settings
   when: set_fixed_IP
+  tags:
+    - vanilla
