@@ -32,7 +32,7 @@
 
   ## End of block KICKSTART
   become: true
-  become_method: "{{ iserver_become }}"
+  become_method: "{{ iserver_kickstart_become }}"
   tags:
     - vanilla
 

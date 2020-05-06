@@ -29,7 +29,7 @@
 
   ## End of block KICKSTART
   become: true
-  become_method: "{{ iserver_become }}"
+  become_method: "{{ iserver_kickstart_become }}"
   tags:
     - vanilla
 
@@ -100,7 +100,7 @@
       enabled: yes
       state: started
 
-  - name: Ensure, that the default user has a SSH authorized key.
+  - name: Ensure that the default user has a SSH authorized key.
     authorized_key:
       user: "{{ iserver_user }}"
       state: present
@@ -184,6 +184,6 @@
     when: iserver_lock_root
     tags:
       - vanilla
-      
+
   ## End of block MAIN
   become: true
