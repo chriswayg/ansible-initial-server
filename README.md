@@ -94,46 +94,36 @@ Running the role with the `vanilla` tag will only make minimal modifications to 
 
 Important Role Variables
 ------------------------
-`iserver_user`
-- Username of the default user
+`iserver_user` - Username of the default user
 
-`iserver_[OS]_repos`
-- List of repositories which will replace the initial defaults
+`iserver_[OS]_repos` - List of repositories which will replace the initial defaults
 
-`iserver_[OS]_packages`
-- List of system utilities to install
+`iserver_[OS]_packages` - List of system utilities to install
 
-`iserver_hostname` and `iserver_domain`
+`iserver_hostname` and `iserver_domain` - Hostname and domain name
 
-`iserver_sshkey`
-- SSH-key of the default user
+`iserver_sshkey` - SSH-key of the default user
 
 Important Flags
 ---------------
-`iserver_is_a_vm`
-- set to False when using the role on bare metal server
+`iserver_is_a_vm` - set to False when using the role on bare metal server
 
-`iserver_lock_root`
-- set to True in order to disallow root login even on console
+`iserver_lock_root` - set to True in order to disallow root login even on console
 
-`set_fixed_IP`
-- set to True if configuring a static IP
+`set_fixed_IP` - set to True if configuring a static IP
 
-`iserver_verse_enabled`
-- show a Verse of the Day on motd
+`iserver_verse_enabled` - show a Verse of the Day on motd
 
 Tags
 ----
-`vanilla`
-- only make minimal modifications
+`vanilla` - only make minimal modifications
 
-`is_template`
-- include additional tasks useful for Proxmox templates
+`is_template` - include additional tasks useful for Proxmox templates
 
-`travis`
-- these tasks will be skipped in Travis testing
+`travis` - these tasks will be skipped in Travis testing
 
-Check which tasks are going to be executed (example)
+- Check which tasks are going to be executed (example)
+
 ```
 ansible-playbook -v server-template.yml --tags "vanilla,is_template" --skip-tags "openbsd,alpine" --list-tasks
 ```
