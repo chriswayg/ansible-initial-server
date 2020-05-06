@@ -74,14 +74,12 @@
     import_tasks: networking-debian.yml
     when: ansible_distribution == 'Debian'
     tags:
-      - vanilla
       - travis
 
   - name: Networking - Ubuntu.
     import_tasks: networking-ubuntu.yml
     when: ansible_distribution == 'Ubuntu'
     tags:
-      - vanilla
       - travis
 
   - name: Copy original hosts file to back it up (once).
@@ -102,7 +100,7 @@
       - travis
 
   ### SSH ###
-  - name: Ensure, that the default user has a SSH authorized key.
+  - name: Ensure that the default user has a SSH authorized key.
     authorized_key:
       user: "{{ iserver_user }}"
       state: present
