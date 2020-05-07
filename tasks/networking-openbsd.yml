@@ -12,10 +12,15 @@
 #   sh /etc/netstart
 # - test in Proxmox
 
+- name: Copy original /etc/gettytab (once).
+  command: cp /etc/gettytab /etc/gettytab.original
+  args:
+    creates: /etc/gettytab.original
+
 - name: Copy script which will display IP and SSH fingerprint before login.
   template:
-    src: show-ip-address-openbsd.j2
-    dest: /usr/local/bin/show-ip-address.sh
+    src: show-ip-adress-openbsd.py.j2
+    dest: /usr/local/bin/show-ip-address.py
     mode: a+x
 
 - name: Enable the show-ip-address script to autostart.
@@ -23,9 +28,9 @@
     path: "/etc/rc.local"
     create: yes
     block: |
-      if [ -x /usr/local/bin/ssh-host-keygen.sh ]; then
+      if [ -x /usr/local/bin/show-ip-address.py ]; then
         echo "updating display of IP and SSH fingerprint."
-        /usr/local/bin/show-ip-address.sh
+        /usr/local/bin/show-ip-address.py
       fi
     marker: "# {mark} ANSIBLE MANAGED BLOCK - IP"
 
