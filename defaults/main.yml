@@ -72,7 +72,7 @@ iserver_deb_packages:
 # packages to install on every OpenBSD server
 # qemu-guest-agent is not funtional on OpenBSD (see notes.md)
 iserver_obsd_packages:
-  - python-2.7 # required by ansible
+  - python  # required by ansible
   - colorls # used by .profile
   - nano    # set as default editor in .profile
   - pstree
