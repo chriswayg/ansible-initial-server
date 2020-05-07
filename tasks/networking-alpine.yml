@@ -3,7 +3,7 @@
 
 - name: Copy script that runs when the network comes up to display IP and SSH fingerprint before login.
   template:
-    src: show-ip-address-alpine.j2
+    src: show-ip-address-alpine.sh.j2
     dest: /etc/network/if-up.d/show-ip-address
     mode: a+x
 

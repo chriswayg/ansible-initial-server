@@ -9,7 +9,7 @@
 
 - name: Copy the file which will show a welcome motd after login.
   template:
-    src: motd-welcome-debian-ubuntu.j2
+    src: motd-welcome-debian-ubuntu.sh.j2
     dest: /etc/update-motd.d/15-motd-welcome
     mode: a+x
 
@@ -26,7 +26,7 @@
 
 - name: Copy the file which will show a verse and disk space via motd.
   template:
-    src: motd-verse-debian-ubuntu.j2
+    src: motd-verse-debian-ubuntu.sh.j2
     dest: /etc/update-motd.d/85-motd-verse
     mode: a+x
   when: iserver_verse_enabled
