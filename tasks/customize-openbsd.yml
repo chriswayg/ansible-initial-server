@@ -12,12 +12,12 @@
     dest: /usr/local/bin/motd-welcome-openbsd.sh
     mode: a+x
 
-- name: Enable the refresh-motd script to autostart.
+- name: Enable the motd script to autostart.
   blockinfile:
     path: "/etc/rc.local"
     create: yes
     block: |
-      if [ -x /usr/local/bin/rmotd-welcome-openbsd.sh ]; then
+      if [ -x /usr/local/bin/motd-welcome-openbsd.sh ]; then
         echo "updating motd."
         /usr/local/bin/motd-welcome-openbsd.sh
       fi
