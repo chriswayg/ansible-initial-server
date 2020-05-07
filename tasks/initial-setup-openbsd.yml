@@ -46,6 +46,19 @@
   - name: Base Packages - OpenBSD
     import_tasks: packages-openbsd.yml
 
+  - name: Create symbolic links for python 2.7
+    file:
+      src: "{{ item.src }}"
+      dest: "{{ item.dest }}"
+      state: link
+    loop:
+      - { src: '/usr/local/bin/python2.7', dest: '/usr/bin/python' }
+      - { src: '/usr/local/bin/python2.7', dest: '/usr/bin/python2' }
+      - { src: '/usr/local/bin/python2.7', dest: '/usr/local/bin/python' }
+      - { src: '/usr/local/bin/python2.7-2to', dest: '/usr/local/bin/2to3' }
+      - { src: '/usr/local/bin/python2.7-config', dest: '/usr/local/bin/python-config' }
+      - { src: '/usr/local/bin/pydoc2.7', dest: '/usr/local/bin/pydoc' }
+      
   ### NETWORKING ###
   - name: New SSH host keys on first boot.
     import_tasks: ssh-host-keygen-openbsd.yml
