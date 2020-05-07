@@ -1,0 +1,44 @@
+#!/usr/bin/python2
+# {{ ansible_managed }}
+# OpenBSD
+
+## Because OpenBSD does not use /etc/issue we have to modify the /etc/gettytab instaed
+
+## Original gettytab line - did not change in 25 years! (with 8 spaces indentation)
+# :np:im=\r\n%s/%m (%h) (%t)\r\n\r\n:sp#1200:
+## restore original
+# sed -i 's/:np:im=.*/:np:im=\\r\\n%s\/%m (%h) (%t)\\r\\n\\r\\n:sp#1200:/' /etc/gettytab
+
+## resulting line should look similar to this in /etc/gettytab:
+# :np:im=\r\n%s/%m (%h) (%t)\r\n\r\nECDSA key fingerprint  SHA256 eegsh70oiZmpr1lxzeMAdMEnoLV8C5rnWJ9zLEizWhs\r\n\r\nSSH user  deploy    IP  10.10.10.69\r\n\r\n:sp#1200:
+
+## previous shell script using sed caused errors when the key fingerprint
+## contained a slash for example (too much trouble with escaping characters)
+#fingerprint=$(ssh-keygen -l -f /etc/ssh/ssh_host_ecdsa_key.pub | awk '/256 / { print $2 }' | sed 's/SHA256:/SHA256 /')
+#ipaddress=$(ifconfig {{ iserver_obsd_interface }} | awk '/inet / { print $2 }')
+## escaped forward-slash '/' for sed, multiple escaped backslashes '\': once for double-quotes, again for sed
+#sed -i "s/:np:im=.*/:np:im=\\\r\\\n%s\/%m (%h) (%t)\\\r\\\n\\\r\\\nECDSA key fingerprint  $fingerprint\\\r\\\n\\\r\\\nSSH user  {{ iserver_user }}    IP  $ipaddress\\\r\\\n\\\r\\\n:sp#1200:/" /etc/gettytab
+
+import subprocess
+
+# remove the colon ':' using sed as the colon does not work in gettytab
+cmd="ssh-keygen -l -f /etc/ssh/ssh_host_ecdsa_key.pub | awk '/256 / { print $2 }' | sed 's/SHA256:/SHA256 /'"
+ps = subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
+fingerprint = ps.communicate()[0].rstrip("\n")
+
+cmd="ifconfig {{ iserver_obsd_interface }} | awk '/inet / { print $2 }'"
+ps = subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
+ipaddress = ps.communicate()[0].rstrip("\n")
+
+showinfo = ":np:im=\\r\\n%s/%m (%h) (%t)\\r\\n\\r\\nECDSA key fingerprint  " + fingerprint + "\\r\\n\\r\\nSSH user  {{ iserver_user }}    IP  " + ipaddress + "\\r\\n\\r\\n:sp#1200:"
+
+f = open("/etc/gettytab.original",'r')
+filedata = f.read()
+f.close()
+
+# we match the exact line in /etc/gettytab (using escape characters)
+newdata = filedata.replace(":np:im=\\r\\n%s/%m (%h) (%t)\\r\\n\\r\\n:sp#1200:",showinfo)
+
+f = open("/etc/gettytab",'w')
+f.write(newdata)
+f.close()
