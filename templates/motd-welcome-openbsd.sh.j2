@@ -1,0 +1,8 @@
+#!/bin/bash
+# Ansible managed
+# OpenBSD
+
+# Note that the /etc/motd file is modified by /etc/rc whenever the system is booted.
+# To keep any custom message intact, ensure that you leave *two blank lines* at the top,
+# or your message will be overwritten.
+printf "\n\n  Welcome to $(dmesg | head -1 | cut -d' ' -f1,2) Server\n\n" > /etc/motd

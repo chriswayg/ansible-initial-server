@@ -6,14 +6,22 @@
   args:
     creates: /etc/motd.original
 
-# This does not update the motd with a new os-release after initial creation.
-# Note that the /etc/motd file is modified by /etc/rc whenever the system is booted.
-# To keep any custom message intact, ensure that you leave *two blank lines* at the top,
-# or your message will be overwritten.
-- name: Create the file which will show a welcome motd after login.
-  command: printf "\n\n  Welcome to $(dmesg | head -1 | cut -d' ' -f1,2) Server\n\n" > /etc/motd
-  args:
-    creates: /etc/motd
+- name: Copy script which will refresh the motd that is displayed after login.
+  template:
+    src: motd-welcome-openbsd.sh.j2
+    dest: /usr/local/bin/motd-welcome-openbsd.sh
+    mode: a+x
+
+- name: Enable the refresh-motd script to autostart.
+  blockinfile:
+    path: "/etc/rc.local"
+    create: yes
+    block: |
+      if [ -x /usr/local/bin/rmotd-welcome-openbsd.sh ]; then
+        echo "updating motd."
+        /usr/local/bin/motd-welcome-openbsd.sh
+      fi
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - MOTD"
 
 - name: Add a block of commands in the root user profile.
   blockinfile:
