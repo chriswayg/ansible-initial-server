@@ -110,7 +110,7 @@ Important Flags
 
 `iserver_lock_root` - set to True in order to disallow root login even on console
 
-`set_fixed_IP` - set to True if configuring a static IP
+`iserver_static_ip` - set to True if configuring a static IP
 
 `iserver_verse_enabled` - show a Verse of the Day on motd
 

@@ -12,6 +12,6 @@
   template:
     src: network-interfaces.j2
     dest: /etc/network/interfaces
-  when: set_fixed_IP | bool
+  when: iserver_static_ip | bool
   tags:
     - vanilla

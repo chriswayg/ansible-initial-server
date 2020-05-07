@@ -26,6 +26,6 @@
     command: netplan generate && netplan apply
     when: netplan_generate_config is changed
   ## End of block Set fixed IP
-  when: set_fixed_IP
+  when: iserver_static_ip
   tags:
     - vanilla

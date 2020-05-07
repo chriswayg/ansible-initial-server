@@ -97,7 +97,7 @@ iserver_fqdn: "{{ iserver_hostname }}.{{ iserver_domain }}"
 
 iserver_interface: ens18
 iserver_obsd_interface: vio0
-set_fixed_IP: false
+iserver_static_ip: false
 # Add here main IP of the host
 iserver_host_main_ip: 127.1.1.1
 # This IP will go into 'hosts'

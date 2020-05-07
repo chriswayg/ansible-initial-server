@@ -40,7 +40,7 @@
     dest: /etc/hostname.{{ iserver_obsd_interface }}
   notify:
     - Apply Network Settings
-  when: not set_fixed_IP
+  when: not iserver_static_ip
   tags:
     - vanilla
 
@@ -53,7 +53,7 @@
   with_items: "{{ iserver_nameservers }}"
   notify:
     - Apply Network Settings
-  when: set_fixed_IP
+  when: iserver_static_ip
   tags:
     - vanilla
 
@@ -63,7 +63,7 @@
     dest: /etc/hostname.{{ iserver_obsd_interface }}
   notify:
     - Apply Network Settings
-  when: set_fixed_IP
+  when: iserver_static_ip
   tags:
     - vanilla
 
@@ -73,6 +73,6 @@
     dest: /etc/mygate
   notify:
     - Apply Network Settings
-  when: set_fixed_IP
+  when: iserver_static_ip
   tags:
     - vanilla
