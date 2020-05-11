@@ -1,16 +1,7 @@
 ### NETWORKING ###
 # OpenBSD
 
-## TODO: Test static IP, possibly a route via main host IP?
-# - Add a route via {{ iserver_host_main_ip }}
-# - check:
-#   cat /etc/hostname.vio0
-#   cat /etc/mygate
-#   cat /etc/resolv.conf
-#   ifconfig
-#   netstat -rn
-#   sh /etc/netstart
-# - test in Proxmox
+# see notes.md and comments in hostname-openbsd.j2
 
 - name: Copy original /etc/gettytab (once).
   command: cp /etc/gettytab /etc/gettytab.original
@@ -67,12 +58,13 @@
   tags:
     - vanilla
 
-- name: Ensure that static IP gateway is configured.
-  template:
-    src: mygate-openbsd.j2
-    dest: /etc/mygate
-  notify:
-    - Apply Network Settings
-  when: iserver_static_ip
-  tags:
-    - vanilla
+# not used
+# - name: Ensure that static IP gateway is configured.
+#   template:
+#     src: mygate-openbsd.j2
+#     dest: /etc/mygate
+#   notify:
+#     - Apply Network Settings
+#   when: iserver_static_ip
+#   tags:
+#     - vanilla

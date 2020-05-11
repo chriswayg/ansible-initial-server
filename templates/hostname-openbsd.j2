@@ -1,1 +1,14 @@
+# {{ ansible_managed }}
+# OpenBSD
+
+# -link: specifies the Hardware (link-level) MAC address.
+# -iface: The destination is directly reachable via the interface requiring no intermediary system to act as a gateway.
+# - both together: the gateway given is the MAC address of the host on the common network, indicating the interface to be used for transmission.
+# /etc/mygate is not used by OppenBSD with this config.
+# This is similar to onlink in Ubuntu or pointopoint in Debian.
+# see also: Network settings for OpenBSD system hosted at OVH – Frozen Geek Technology Blog
+
 inet {{ iserver_ip }}{{ iserver_netmask }}
+!sleep 2
+!route add -inet {{ iserver_host_main_ip }}/32 -link -iface {{ iserver_obsd_interface }}
+!route add -inet default {{ iserver_host_main_ip }}
