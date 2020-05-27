@@ -26,7 +26,7 @@ cmd="ssh-keygen -l -f /etc/ssh/ssh_host_ecdsa_key.pub | awk '/256 / { print $2 }
 ps = subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
 fingerprint = ps.communicate()[0].rstrip("\n")
 
-cmd="ifconfig {{ iserver_obsd_interface }} | awk '/inet / { print $2 }'"
+cmd="ifconfig {{ ansible_default_ipv4.interface }} | awk '/inet / { print $2 }'"
 ps = subprocess.Popen(cmd,shell=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
 ipaddress = ps.communicate()[0].rstrip("\n")
 

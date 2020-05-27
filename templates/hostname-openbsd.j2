@@ -10,5 +10,5 @@
 
 inet {{ iserver_ip }}{{ iserver_netmask }}
 !sleep 2
-!route add -inet {{ iserver_host_main_ip }}/32 -link -iface {{ iserver_obsd_interface }}
+!route add -inet {{ iserver_host_main_ip }}/32 -link -iface {{ ansible_default_ipv4.interface }}
 !route add -inet default {{ iserver_host_main_ip }}

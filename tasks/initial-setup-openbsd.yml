@@ -17,7 +17,7 @@
   #     password: '*'
 
   - name: Check if iserver_user exists.
-    shell: id -u "{{ iserver_user }}" > /dev/null 2>&1
+    command: id -u "{{ iserver_user }}"
     ignore_errors: True
     changed_when: false
     register: user_exists
@@ -27,6 +27,7 @@
       src: doas-openbsd.conf.j2
       dest: /etc/doas.conf
       mode: 0440
+      validate: /usr/bin/doas -C /etc/doas.conf
     when: user_exists is succeeded
   ## End of block KICKSTART
   become: true
@@ -46,18 +47,16 @@
   - name: Base Packages - OpenBSD
     import_tasks: packages-openbsd.yml
 
-  - name: Create symbolic links for python 2.7
+  - name: Create symbolic links for python 3
     file:
       src: "{{ item.src }}"
       dest: "{{ item.dest }}"
       state: link
     loop:
-      - { src: '/usr/local/bin/python2.7', dest: '/usr/bin/python' }
-      - { src: '/usr/local/bin/python2.7', dest: '/usr/bin/python2' }
-      - { src: '/usr/local/bin/python2.7', dest: '/usr/local/bin/python' }
-      - { src: '/usr/local/bin/python2.7-2to3', dest: '/usr/local/bin/2to3' }
-      - { src: '/usr/local/bin/python2.7-config', dest: '/usr/local/bin/python-config' }
-      - { src: '/usr/local/bin/pydoc2.7', dest: '/usr/local/bin/pydoc' }
+      - { src: '/usr/local/bin/python3', dest: '/usr/bin/python' }
+      - { src: '/usr/local/bin/python3', dest: '/usr/local/bin/python' }
+      - { src: '/usr/local/bin/python3-config', dest: '/usr/local/bin/python-config' }
+      - { src: '/usr/local/bin/pydoc3', dest: '/usr/local/bin/pydoc' }
 
   ### NETWORKING ###
   - name: New SSH host keys on first boot.

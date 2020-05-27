@@ -8,6 +8,6 @@
     mode: a+x
 
 - name: Run the cleanup script for VM templates (only once).
-  shell: /usr/local/bin/template-cleanup.sh
+  command: /usr/local/bin/template-cleanup.sh
   args:
     creates: /etc/.template-cleanup.done

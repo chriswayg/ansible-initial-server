@@ -2,7 +2,9 @@
 # OpenBSD
 
 - name: Move the original /etc/motd to back it up (once).
-  command: mv /etc/motd /etc/motd.original
+  file:
+    src: /etc/motd
+    dest: /etc/motd.original
   args:
     creates: /etc/motd.original
 
