@@ -2,9 +2,10 @@
 # OpenBSD
 
 # see notes.md and comments in hostname-openbsd.j2
-
 - name: Copy original /etc/gettytab (once).
-  command: cp /etc/gettytab /etc/gettytab.original
+  file:
+    src: /etc/gettytab
+    dest: /etc/gettytab.original
   args:
     creates: /etc/gettytab.original
 
@@ -28,7 +29,7 @@
 - name: Ensure that DHCP is configured.
   copy:
     src: hostname-openbsd-dhcp
-    dest: /etc/hostname.{{ iserver_obsd_interface }}
+    dest: /etc/hostname.{{ ansible_default_ipv4.interface }}
   notify:
     - Apply Network Settings
   when: not iserver_static_ip
@@ -51,7 +52,7 @@
 - name: Ensure that static IP is configured.
   template:
     src: hostname-openbsd.j2
-    dest: /etc/hostname.{{ iserver_obsd_interface }}
+    dest: /etc/hostname.{{ ansible_default_ipv4.interface }}
   notify:
     - Apply Network Settings
   when: iserver_static_ip
