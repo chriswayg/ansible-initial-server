@@ -51,3 +51,4 @@
   systemd:
     name: "cloud-init"
     enabled: yes
+  when: iserver_cloud_init_enabled == True
