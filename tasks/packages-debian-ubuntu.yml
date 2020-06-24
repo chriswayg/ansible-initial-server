@@ -38,13 +38,17 @@
 
 - name: Ensure that initial packages are installed.
   apt:
+    name: "{{ iserver_deb_packages }}"
+    state: present
+
+- name: Ensure cloud-init installed
+  apt:
     name: "cloud-init"
     state: present
   when: iserver_cloud_init_enabled == True
 
-- name: Ensure systemd services started
+- name: Ensure cloud-init services started / enabled
   systemd:
     name: "cloud-init"
     state: started
     enabled: yes
-  when: iserver_cloud_init_enabled == True
