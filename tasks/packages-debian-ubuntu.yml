@@ -50,5 +50,4 @@
 - name: Ensure cloud-init services started / enabled
   systemd:
     name: "cloud-init"
-    state: started
     enabled: yes
