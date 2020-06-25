@@ -113,3 +113,9 @@
       {{ iserver_bashrc_user_ubuntu }}
     marker: "# {mark} ANSIBLE MANAGED BLOCK"
   when: ansible_distribution == 'Ubuntu'
+
+- name: Configure cloud-init to use proper data source
+  template:
+    src: "templates/cloud-init-pve.cfg.j2"
+    dest: "/etc/cloud/cloud.cfg.d/99_pve.cfg"
+  when: iserver_cloud_init_enabled == True
