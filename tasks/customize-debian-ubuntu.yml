@@ -119,3 +119,9 @@
     src: "templates/cloud-init-pve.cfg.j2"
     dest: "/etc/cloud/cloud.cfg.d/99_pve.cfg"
   when: iserver_cloud_init_enabled == True
+
+- name: Delete /etc/machine-info
+  file:
+    path: /etc/machine-info
+    state: absent
+
