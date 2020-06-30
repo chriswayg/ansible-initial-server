@@ -125,3 +125,7 @@
     path: /etc/machine-info
     state: absent
 
+- name: Delete /etc/hostname
+  file:
+    path: /etc/hostname
+    state: absent
