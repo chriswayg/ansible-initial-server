@@ -120,12 +120,15 @@
     dest: "/etc/cloud/cloud.cfg.d/99_pve.cfg"
   when: iserver_cloud_init_enabled == True
 
-- name: Delete /etc/machine-info
-  file:
-    path: /etc/machine-info
-    state: absent
+- name: Check if /etc/network/if-up.d/show-ip-address exist
+  stat:
+    path: /etc/network/if-up.d/show-ip-address
+  register: show-ip-address_result
 
-- name: Delete /etc/hostname
-  file:
-    path: /etc/hostname
-    state: absent
+- name: Fix /etc/network/if-up.d/show-ip-address bug
+  lineinfile:
+    path: /etc/network/if-up.d/show-ip-address
+    regexp: '^printf \"SSH key fingerprint'
+    line: "printf \"SSH key fingerprint: \n$(ssh-keygen -l -f /etc/ssh/ssh_host_ecdsa_key.pub | awk '/256 / { print $2 }')\n\" >> /etc/issue"
+  when: show-ip-address_result.stat.exists
+
