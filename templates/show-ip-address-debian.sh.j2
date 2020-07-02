@@ -14,6 +14,6 @@ fi
 # Only run from main interface.
 if [ "$IFACE" = {{ iserver_interface }} ]; then
     cp /etc/issue.original /etc/issue
-    printf "SSH key fingerprint: \n$(ssh-keygen -l -f /etc/ssh/ssh_host_ecdsa_key.pub | awk '/256 / { print $2 })'\n" >> /etc/issue
+    printf "SSH key fingerprint: \n$(ssh-keygen -l -f /etc/ssh/ssh_host_ecdsa_key.pub | awk '/256 / { print $2 }')\n" >> /etc/issue
     printf "\nSSH user: {{ iserver_user }}     Server IP: $(ip -o route get to 1.1.1.1 | sed -n 's/.*src \([0-9.]\+\).*/\1/p')\n\n" >> /etc/issue
 fi
