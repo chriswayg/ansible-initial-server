@@ -40,3 +40,15 @@
   apt:
     name: "{{ iserver_deb_packages }}"
     state: present
+
+- name: Ensure cloud-init installed
+  apt:
+    name: "cloud-init"
+    state: present
+  when: iserver_cloud_init_enabled == True
+
+- name: Ensure cloud-init services started / enabled
+  systemd:
+    name: "cloud-init"
+    enabled: yes
+  when: iserver_cloud_init_enabled == True
