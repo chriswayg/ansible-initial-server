@@ -110,7 +110,7 @@ iserver_nameservers: 1.1.1.1,1.0.0.1
 
 ### SSH ###
 iserver_ssh_port: 22
-# this picks up the dafault public key from the user
+# this picks up the default public key from the user
 iserver_sshkey: "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_rsa.pub') }}"
 iserver_ssh_banner: none # or /etc/ssh/issue.net
 
