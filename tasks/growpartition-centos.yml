@@ -1,0 +1,32 @@
+# GROW PARTITION
+# CentOS
+
+- name: Ensure we got all packages
+  yum:
+    name: cloud-utils-growpart
+
+
+- name: Copy script to automatically Grow Partition after resize by Proxmox.
+  copy:
+    src: auto_grow_partition-centos.sh
+    dest: /usr/local/bin/auto_grow_partition.sh
+    mode: a+x
+
+
+- name: Copy script to automatically Grow Partition after resize by Proxmox.
+  copy:
+    src: autogrowpart-debian-ubuntu.service
+    dest: /usr/lib/systemd/system/auto_grow_partition.service
+
+    mode: a+x
+
+- name: Setup auto grow part service
+  file:
+    src: /usr/lib/systemd/system/auto_grow_partition.service
+    dest: /etc/systemd/system/multi-user.target.wants/auto_grow_partition.service
+    state: link
+
+- name: Enable auto grow service
+  systemd:
+    name: auto_grow_partition
+    enabled: yes

@@ -1,0 +1,187 @@
+---
+
+### Initial Setup ###
+# Centos
+
+# Ideas taken from:
+#    https://github.com/mrlesmithjr/packer-templates
+#    https://github.com/DigitalGlobe/packer-templates
+#    https://github.com/chef/bento
+#
+
+# For this block we use 'su' on first-run, because root cannot ssh into the server.
+- name: KICKSTART - Debian, Ubuntu.
+  block:
+  - name: Ensure that sudo is installed.
+    yum:
+      name: "{{ packages }}"
+      state: present
+    vars:
+      packages:
+      - sudo
+
+  ### SUDOERS ###
+  - name: Ensure group "{{ iserver_user }}" exists
+    group:
+      name: "{{ iserver_user }}"
+      state: present
+
+  - name: Ensure that the default user "{{ iserver_user }}" exists
+    user:
+      name: "{{ iserver_user }}"
+      group: "{{ iserver_user }}"
+      password: '*'
+
+  - name: Add the default user with passwordless sudo to sodoers.d
+    template:
+      src: sudo-default-user.j2
+      dest: /etc/sudoers.d/{{ iserver_user }}
+      mode: 0440
+
+  ## End of block KICKSTART
+  become: true
+  become_method: "{{ iserver_kickstart_become }}"
+  tags:
+    - vanilla
+
+
+- name: Reset SSH connection to allow user changes to affect 'current login user'.
+  meta: reset_connection
+  tags:
+    - vanilla
+
+## Now that the default user can do passwordless sudo, run the rest with sudo.
+- name: MAIN
+  block:
+  ### BASE PACKAGES ###
+  - name: Base Packages.
+    import_tasks: packages-centos.yml
+
+  - name: Create a blank /etc/issue, if it does not exist.
+    file:
+      path: /etc/issue
+      state: touch
+      modification_time: preserve
+      access_time: preserve
+
+  - name: Copy original /etc/issue (once).
+    command: cp /etc/issue /etc/issue.original
+    args:
+      creates: /etc/issue.original
+
+  - name: Set hostname.
+    hostname:
+      name: "{{ iserver_hostname }}"
+    notify:
+      - Apply Network Configuration
+    tags:
+      - vanilla
+      - travis
+
+
+  - name: Networking - Ubuntu.
+    import_tasks: networking-centos.yml
+    tags:
+      - travis
+
+  - name: Copy original hosts file to back it up (once).
+    command: cp /etc/hosts /etc/hosts.original
+    args:
+      creates: /etc/hosts.original
+    tags:
+      - vanilla
+
+  - name: Create new hosts file.
+    template:
+      src: hosts.j2
+      dest: /etc/hosts
+    notify:
+      - Apply Network Configuration
+    tags:
+      - vanilla
+      - travis
+
+  ### SSH ###
+  - name: Ensure that the default user has a SSH authorized key.
+    authorized_key:
+      user: "{{ iserver_user }}"
+      state: present
+      key: "{{ iserver_sshkey }}"
+    tags:
+      - vanilla
+
+  # Needed when running in Travis to validate sshd_config.
+  - name: Ensure that SSH service is started.
+    service:
+      name: sshd
+      state: started
+
+  #'UseDNS no' avoids login delays when the remote client's DNS cannot be resolved
+  - name: Apply SSHD configuration.
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      state: present
+      regexp: '^#?\s*{{ item.key }}\s'
+      line:   '{{ item.key }} {{ item.value }}'
+      validate: '/usr/sbin/sshd -t -f %s'
+    with_items:
+    - key:   "PermitRootLogin"
+      value: "no"
+    - key:   "PasswordAuthentication"
+      value: "no"
+    - key:   "ChallengeResponseAuthentication"
+      value: "no"
+    - key:   "UsePAM"
+      value: "yes"
+    - key:   "UseDNS"
+      value: "no"
+    - key:   "Banner"
+      value: "{{ iserver_ssh_banner }}"
+    - key:   "Port"
+      value: "{{ iserver_ssh_port }}"
+    notify: Restart SSHD
+    tags:
+      - vanilla
+
+  - name: Add a warning banner, shown before SSH login.
+    copy:
+      src: issue.net
+      dest: "{{ iserver_ssh_banner }}"
+    when: iserver_ssh_banner != "none"
+
+  ## CUSTOMIZE ###
+  - name: Timezone.
+    import_tasks: timezone-most-distros.yml
+    tags:
+      - vanilla
+      - travis
+
+  - name: Customize.
+    import_tasks: customize-centos.yml
+
+  ### CLOUD ###
+  - name: Serial Console.
+    import_tasks: serialconsole-centos.yml
+    when: iserver_is_a_vm
+    tags:
+      - vanilla
+      - travis
+
+  # Swap is handled by packer
+
+  # GROW PARTITION
+  - name: Grow Partion Automatically.
+    import_tasks: growpartition-centos.yml
+    when: iserver_is_a_vm
+
+  - name: Lock root account to prevent logins for root from console.
+    user:
+      name: root
+      # or use '*'
+      password: '!'
+    when: iserver_lock_root
+    tags:
+      - vanilla
+
+  ## End of block MAIN
+  become: true
