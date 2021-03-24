@@ -1,5 +1,5 @@
 # Ansible managed
-# Debian, Ubuntu
+# Debian, Ubuntu, CentOS
 
 [Unit]
 Description=Automatically Grow Partition after resize by Proxmox.
