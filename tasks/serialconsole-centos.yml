@@ -1,0 +1,14 @@
+# SERIAL CONSOLE
+# Debian, Ubuntu, CENTOS
+
+- name: Enable the serial console by modifying grub.
+  lineinfile:
+    path: /etc/default/grub
+    state: present
+    regexp: '^GRUB_CMDLINE_LINUX='
+    line: 'GRUB_CMDLINE_LINUX="console=ttyS0 console=tty0 net.ifnames=0 biosdevname=0 crashkernel=auto rhgb quiet"'
+  register: update_grub
+
+- name: Update grub.
+  command: grub2-mkconfig -o /boot/grub2/grub.cfg
+  when: update_grub is changed

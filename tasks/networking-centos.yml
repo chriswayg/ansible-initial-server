@@ -1,0 +1,8 @@
+### NETWORKING ###
+# Centos
+- name: Set fixed IP
+  fail:
+    msg: Setting fixed IP is not yet supported
+  when: iserver_static_ip
+  tags:
+    - vanilla
