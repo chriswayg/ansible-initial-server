@@ -53,6 +53,8 @@ iserver_alpine_repos:
 iserver_deb_packages:
   - openssh-server   # needed for Travis testing
   - qemu-guest-agent # needed by packer
+  - cloud-init       # needed by proxmox
+  - cloud-initramfs-growroot
   - sudo
   - python-apt       # used by ansible
   - haveged          # prevent vm boot delays
