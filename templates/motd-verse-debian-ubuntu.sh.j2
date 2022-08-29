@@ -9,7 +9,8 @@ if [ -f /usr/bin/verse ]; then
     echo ""
 fi
 
-uname -srm
 w -s
+
 echo -e "\nDisk usage      Size  Used Avail Use% Mount"
 df -h | grep {{ iserver_main_disk }} # disk space
+echo ""
