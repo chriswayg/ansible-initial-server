@@ -20,26 +20,24 @@ iserver_debian_repos:
   - deb http://deb.debian.org/debian buster-updates main contrib non-free
   - deb-src http://deb.debian.org/debian buster-updates main contrib non-free
 
-iserver_ubuntu_repos:
-  ## Ubuntu 18.04 example
-  - deb http://repo.myloc.de/ubuntu/ bionic main restricted universe multiverse
-  - deb-src http://repo.myloc.de/ubuntu/ bionic main restricted universe multiverse
-  - deb http://repo.myloc.de/ubuntu/ bionic-updates main restricted universe multiverse
-  - deb-src http://repo.myloc.de/ubuntu/ bionic-updates main restricted universe multiverse
-  - deb http://repo.myloc.de/ubuntu/ bionic-backports main restricted universe multiverse
-  - deb-src http://repo.myloc.de/ubuntu/ bionic-backports main restricted universe multiverse
-  - deb http://security.ubuntu.com/ubuntu bionic-security main restricted universe multiverse
-  - deb-src http://security.ubuntu.com/ubuntu bionic-security main restricted universe multiverse
+  ## Debian 11 bullseye
+  # - deb http://deb.debian.org/debian/ bullseye main
+  # - deb-src http://deb.debian.org/debian/ bullseye main
+  # - deb http://security.debian.org/debian-security bullseye-security main
+  # - deb-src http://security.debian.org/debian-security bullseye-security main
+  # - deb http://deb.debian.org/debian/ bullseye-updates main
+  # - deb-src http://deb.debian.org/debian/ bullseye-updates main
 
+iserver_ubuntu_repos:
   ## Ubuntu 20.04 example
-  # - deb http://repo.myloc.de/ubuntu/ focal main restricted universe multiverse
-  # - deb-src http://repo.myloc.de/ubuntu/ focal main restricted universe multiverse
-  # - deb http://repo.myloc.de/ubuntu/ focal-updates main restricted universe multiverse
-  # - deb-src http://repo.myloc.de/ubuntu/ focal-updates main restricted universe multiverse
-  # - deb http://repo.myloc.de/ubuntu/ focal-backports main restricted universe multiverse
-  # - deb-src http://repo.myloc.de/ubuntu/ focal-backports main restricted universe multiverse
-  # - deb http://security.ubuntu.com/ubuntu focal-security main restricted universe multiverse
-  # - deb-src http://security.ubuntu.com/ubuntu focal-security main restricted universe multiverse
+  - deb http://repo.myloc.de/ubuntu/ focal main restricted universe multiverse
+  - deb-src http://repo.myloc.de/ubuntu/ focal main restricted universe multiverse
+  - deb http://repo.myloc.de/ubuntu/ focal-updates main restricted universe multiverse
+  - deb-src http://repo.myloc.de/ubuntu/ focal-updates main restricted universe multiverse
+  - deb http://repo.myloc.de/ubuntu/ focal-backports main restricted universe multiverse
+  - deb-src http://repo.myloc.de/ubuntu/ focal-backports main restricted universe multiverse
+  - deb http://security.ubuntu.com/ubuntu focal-security main restricted universe multiverse
+  - deb-src http://security.ubuntu.com/ubuntu focal-security main restricted universe multiverse
 
 iserver_alpine_repos:
   ## Alpine 3.11 example
@@ -52,9 +50,10 @@ iserver_alpine_repos:
 # packages to install on every Debian/Ubuntu server
 iserver_deb_packages:
   - openssh-server   # needed for Travis testing
-  - qemu-guest-agent # needed by packer
+  # - qemu-guest-agent # needed by packer
   - sudo
-  - python-apt       # used by ansible
+  #- python-apt       # used by ansible (up to Debian 10)
+  - python3-apt      # used by ansible (from Debian 11)
   - haveged          # prevent vm boot delays
   - net-tools        # includes ifconfig, netstat
   - nano             # set as default editor in .profile
@@ -82,7 +81,7 @@ iserver_obsd_packages:
 # packages to install on every Alpine server
 iserver_alpine_packages:
   - openssh # needed for Travis testing
-  - qemu-guest-agent@edgecommunity # needed by packer
+  # - qemu-guest-agent@edgecommunity # needed by packer
   - sudo    # required
   - shadow  # required for adduser with Ansible
   - nano    # set as default editor in .profile
@@ -95,7 +94,7 @@ iserver_hostname: iserver-kvm
 iserver_domain: unassigned.domain
 iserver_fqdn: "{{ iserver_hostname }}.{{ iserver_domain }}"
 
-iserver_interface: ens18
+iserver_interface: ens18 # this could be different in a VPS
 iserver_obsd_interface: vio0
 iserver_static_ip: false
 # Add here main IP of the host
@@ -105,7 +104,7 @@ iserver_host_main_ip: 127.1.1.1
 # - or use a fixed routed external IP for servers
 # - which will also go into and 'interfaces' or 'netplan'
 iserver_ip: 127.0.1.1
-# use slash notation /24 for 255.255.255.0 or /32 for 255.255.255.255
+# use slash notation! /24 for 255.255.255.0 or /32 for 255.255.255.255
 iserver_netmask: "/32"
 iserver_nameservers: 1.1.1.1,1.0.0.1
 
