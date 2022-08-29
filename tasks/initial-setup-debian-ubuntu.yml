@@ -36,6 +36,7 @@
   tags:
     - vanilla
 
+  ## TODO [WARNING]: reset_connection task does not support when conditional
 - name: Reset SSH connection to allow user changes to affect 'current login user'.
   meta: reset_connection
   tags:
@@ -171,16 +172,20 @@
     tags:
       - vanilla
       - travis
+      - proxmox
 
   - name: Remove Swapfile - Ubuntu.
     import_tasks: swapfile-ubuntu.yml
     when: iserver_is_a_vm and ansible_distribution == 'Ubuntu'
-
+    tags:
+      - proxmox
 
   # GROW PARTITION
   - name: Grow Partion Automatically.
     import_tasks: growpartition-debian-ubuntu.yml
     when: iserver_is_a_vm
+    tags:
+      - proxmox
 
   ### CLEANUP ###
   - name: Cleanup.
