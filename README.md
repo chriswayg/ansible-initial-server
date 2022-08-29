@@ -122,6 +122,8 @@ Tags
 
 `travis` - these tasks will be skipped in Travis testing
 
+`proxmox` - these tasks are only intended for Proxmox and should be skipped on a VPS (--skip-tags "proxmox")
+
 - Check which tasks are going to be executed (example)
 
 ```
@@ -165,7 +167,6 @@ For the first run on Alpine (as root before the SSH key has been transferred):
 For subsequent runs or on installations which have sudo/doas and SSH-key already enabled:
 
 - `ansible-playbook -v server-template.yml`
-
 
 License
 -------
