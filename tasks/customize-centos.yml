@@ -1,0 +1,25 @@
+---
+- name: Move the original /etc/motd to back it up (once).
+  command: mv /etc/motd /etc/motd.original
+  args:
+    creates: /etc/motd.original
+
+# This does not update the motd with a new os-release after initial creation.
+- name: Create the file which will show a welcome motd after login.
+  shell: source /etc/os-release && printf "\n $PRETTY_NAME ($VERSION_ID) Server\n\n" > /etc/motd
+  args:
+    creates: /etc/motd
+
+- name: Add a block of bashrc config to the root user (Debian).
+  blockinfile:
+    path: "/root/.bashrc"
+    block: |
+      {{ iserver_bashrc_root_centos }}
+    marker: "# {mark} ANSIBLE MANAGED BLOCK"
+
+- name: Add a block of bashrc config to the default user (Debian).
+  blockinfile:
+    path: "/home/{{ iserver_user }}/.bashrc"
+    block: |
+      {{ iserver_bashrc_user_centos }}
+    marker: "# {mark} ANSIBLE MANAGED BLOCK"

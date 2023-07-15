@@ -24,7 +24,7 @@
   tags:
     - vanilla
 
-# Debian, Ubuntu
+# Debian, Ubuntu, CentOS
 - name: Restart SSH
   service:
     name: ssh
@@ -34,7 +34,7 @@
   tags:
     - vanilla
 
-# Debian, Ubuntu
+# Debian, Ubuntu, CentOS
 - name: Apply Network Configuration
   service:
     name: systemd-logind

@@ -89,6 +89,14 @@ iserver_alpine_packages:
   - wget
   - curl
 
+iserver_rpm_packages:
+  - redhat-lsb-core
+  - wget
+  - curl
+
+# Enable EPEL
+iserver_centos_enable_epel: true
+
 ### NETWORKING ###
 iserver_hostname: iserver-kvm
 iserver_domain: unassigned.domain
@@ -110,7 +118,7 @@ iserver_nameservers: 1.1.1.1,1.0.0.1
 
 ### SSH ###
 iserver_ssh_port: 22
-# this picks up the dafault public key from the user
+# this picks up the default public key from the user
 iserver_sshkey: "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_rsa.pub') }}"
 iserver_ssh_banner: none # or /etc/ssh/issue.net
 
@@ -181,6 +189,25 @@ iserver_alpine_user_profile: |
   eval "`dircolors`"
   alias ls='ls $LS_OPTIONS'
   export EDITOR=/usr/bin/nano
+
+# CentOS profiles
+iserver_bashrc_root_centos: |
+  export PS1="\[\033[1;31m\][\u@\h:\w]#\[\033[0m\] "
+  export LS_OPTIONS='--color=auto'
+  eval "`dircolors`"
+  alias ls='ls $LS_OPTIONS'
+  alias ll='ls $LS_OPTIONS -l'
+  alias l='ls $LS_OPTIONS -lA'
+  export EDITOR=/usr/bin/vi
+
+iserver_bashrc_user_centos: |
+  export PS1="\[\033[1;34m\][\u@\h:\w]$\[\033[0m\] "
+  export LS_OPTIONS='--color=auto'
+  eval "`dircolors`"
+  alias ls='ls $LS_OPTIONS'
+  alias ll='ls $LS_OPTIONS -l'
+  alias l='ls $LS_OPTIONS -lA'
+  export EDITOR=/usr/bin/vi
 
 # motd
 iserver_motd_welcome: |
